@@ -116,6 +116,19 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
+
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-gray-700">Status Keluarga</label>
+                        <select name="status" id="status" required
+                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-base px-3 sm:px-4 py-2 sm:py-3">
+                            <option value="">Pilih Status</option>
+                            <option value="tetap" {{ old('status') == 'tetap' ? 'selected' : '' }}>Tetap</option>
+                            <option value="domisili" {{ old('status') == 'domisili' ? 'selected' : '' }}>Domisili</option>
+                        </select>
+                        @error('status')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
 
                 <div class="mt-6 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">

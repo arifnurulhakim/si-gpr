@@ -40,6 +40,14 @@
                         {{ $family->city }}, {{ $family->province }} {{ $family->postal_code }}
                     </dd>
                 </div>
+                <div class="bg-white px-3 py-4 sm:px-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Status Keluarga</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $family->status == 'tetap' ? 'bg-blue-100 text-blue-800' : 'bg-orange-100 text-orange-800' }}">
+                            {{ ucfirst($family->status) }}
+                        </span>
+                    </dd>
+                </div>
             </dl>
         </div>
     </div>
@@ -77,8 +85,13 @@
                         
                         <div class="text-sm text-gray-500 space-y-1">
                             <p><span class="font-medium">Tanggal Lahir:</span> {{ $member->date_of_birth->format('d/m/Y') }}</p>
-                            <p><span class="font-medium">Status:</span> {{ $member->marital_status }}</p>
+                            <p><span class="font-medium">Status Kawin:</span> {{ $member->marital_status }}</p>
                             <p><span class="font-medium">Hubungan:</span> {{ $member->relationship_to_head }}</p>
+                            <p><span class="font-medium">Status:</span> 
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $member->status == 'tetap' ? 'bg-blue-100 text-blue-800' : 'bg-orange-100 text-orange-800' }}">
+                                    {{ ucfirst($member->status) }}
+                                </span>
+                            </p>
                         </div>
                         
                         <div class="flex items-center justify-between pt-2">
@@ -110,6 +123,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tempat, Tanggal Lahir</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status Perkawinan</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hubungan</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
@@ -122,6 +136,11 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $member->date_of_birth->format('d/m/Y') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $member->marital_status }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $member->relationship_to_head }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $member->status == 'tetap' ? 'bg-blue-100 text-blue-800' : 'bg-orange-100 text-orange-800' }}">
+                                {{ ucfirst($member->status) }}
+                            </span>
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex space-x-2">
                                 <a href="{{ route('family-members.edit', $member->id) }}" class="text-yellow-600 hover:text-yellow-900">Edit</a>
@@ -135,7 +154,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">Belum ada anggota keluarga</td>
+                        <td colspan="8" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">Belum ada anggota keluarga</td>
                     </tr>
                     @endforelse
                 </tbody>
