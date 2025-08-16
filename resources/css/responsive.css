@@ -1,0 +1,66 @@
+/* Responsive Utilities for E-Kartu Keluarga */
+
+/* Mobile-first approach */
+@media (max-width: 640px) {
+    .mobile-hidden {
+        display: none !important;
+    }
+
+    .mobile-full-width {
+        width: 100% !important;
+    }
+
+    .mobile-text-center {
+        text-align: center !important;
+    }
+
+    .mobile-p-2 {
+        padding: 0.5rem !important;
+    }
+
+    .mobile-mb-4 {
+        margin-bottom: 1rem !important;
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 641px) and (max-width: 1024px) {
+    .tablet-grid-2 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* Desktop enhancements */
+@media (min-width: 1025px) {
+    .desktop-grid-3 {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+
+    .desktop-sidebar-visible {
+        transform: translateX(0) !important;
+    }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+    .touch-target {
+        min-height: 44px !important;
+        min-width: 44px !important;
+    }
+
+    .touch-spacing {
+        margin: 0.5rem !important;
+        padding: 0.5rem !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .print-hidden {
+        display: none !important;
+    }
+
+    .print-break {
+        page-break-before: always !important;
+    }
+}
