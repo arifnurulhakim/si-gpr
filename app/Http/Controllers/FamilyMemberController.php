@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Family;
 use App\Models\FamilyMember;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class FamilyMemberController extends Controller
 {
@@ -41,9 +42,21 @@ class FamilyMemberController extends Controller
             'marital_status' => 'required|in:BELUM KAWIN,KAWIN,CERAI HIDUP,CERAI MATI',
             'relationship_to_head' => 'required|in:KEPALA KELUARGA,SUAMI,ISTRI,ANAK,ORANGTUA,FAMILI LAIN,PEMBANTU,LAINNYA',
             'citizenship' => 'required|string|max:3',
+            'status' => 'required|in:tetap,domisili',
+            'ktp_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        FamilyMember::create($request->all());
+        $data = $request->except('ktp_image');
+
+        // Handle file upload
+        if ($request->hasFile('ktp_image')) {
+            $image = $request->file('ktp_image');
+            $imageName = time() . '_' . $request->nik . '.' . $image->getClientOriginalExtension();
+            $imagePath = $image->storeAs('public/ktp-images', $imageName);
+            $data['ktp_image'] = 'ktp-images/' . $imageName;
+        }
+
+        FamilyMember::create($data);
 
         return redirect()->route('families.show', $request->family_id)->with('success', 'Anggota keluarga berhasil ditambahkan');
     }
@@ -83,9 +96,26 @@ class FamilyMemberController extends Controller
             'marital_status' => 'required|in:BELUM KAWIN,KAWIN,CERAI HIDUP,CERAI MATI',
             'relationship_to_head' => 'required|in:KEPALA KELUARGA,SUAMI,ISTRI,ANAK,ORANGTUA,FAMILI LAIN,PEMBANTU,LAINNYA',
             'citizenship' => 'required|string|max:3',
+            'status' => 'required|in:tetap,domisili',
+            'ktp_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $familyMember->update($request->all());
+        $data = $request->except('ktp_image');
+
+        // Handle file upload
+        if ($request->hasFile('ktp_image')) {
+            // Delete old image if exists
+            if ($familyMember->ktp_image) {
+                Storage::delete('public/' . $familyMember->ktp_image);
+            }
+
+            $image = $request->file('ktp_image');
+            $imageName = time() . '_' . $request->nik . '.' . $image->getClientOriginalExtension();
+            $imagePath = $image->storeAs('public/ktp-images', $imageName);
+            $data['ktp_image'] = 'ktp-images/' . $imageName;
+        }
+
+        $familyMember->update($data);
 
         return redirect()->route('families.show', $familyMember->family_id)->with('success', 'Anggota keluarga berhasil diperbarui');
     }
@@ -97,6 +127,12 @@ class FamilyMemberController extends Controller
     {
         $familyMember = FamilyMember::findOrFail($id);
         $familyId = $familyMember->family_id;
+
+        // Delete associated image if exists
+        if ($familyMember->ktp_image) {
+            Storage::delete('public/' . $familyMember->ktp_image);
+        }
+
         $familyMember->delete();
 
         return redirect()->route('families.show', $familyId)->with('success', 'Anggota keluarga berhasil dihapus');

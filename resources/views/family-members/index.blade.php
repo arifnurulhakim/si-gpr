@@ -33,19 +33,19 @@
                                 </span>
                             </div>
                         </div>
-                        
+
                         <div class="text-sm text-gray-500 space-y-1">
                             <p><span class="font-medium">Kartu Keluarga:</span> {{ $member->family->family_card_number }}</p>
                             <p><span class="font-medium">Kepala Keluarga:</span> {{ $member->family->head_of_family_name }}</p>
                             <p><span class="font-medium">Tanggal Lahir:</span> {{ $member->date_of_birth->format('d/m/Y') }}</p>
                             <p><span class="font-medium">Hubungan:</span> {{ $member->relationship_to_head }}</p>
-                            <p><span class="font-medium">Status:</span> 
+                            <p><span class="font-medium">Status:</span>
                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $member->status == 'tetap' ? 'bg-blue-100 text-blue-800' : 'bg-orange-100 text-orange-800' }}">
                                     {{ ucfirst($member->status) }}
                                 </span>
                             </p>
                         </div>
-                        
+
                         <div class="flex items-center justify-between pt-2">
                             <a href="{{ route('family-members.edit', $member->id) }}" class="text-yellow-600 hover:text-yellow-900 text-sm font-medium">Edit</a>
                             <form action="{{ route('family-members.destroy', $member->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus anggota keluarga ini?')">

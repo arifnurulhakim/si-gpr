@@ -18,6 +18,7 @@ class FamilyMember extends Model
         'relationship_to_head',
         'citizenship',
         'status',
+        'ktp_image',
     ];
 
     protected $casts = [

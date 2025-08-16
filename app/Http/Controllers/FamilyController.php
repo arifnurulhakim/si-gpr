@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Family;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class FamilyController extends Controller
 {
@@ -40,9 +41,21 @@ class FamilyController extends Controller
             'city' => 'required|string|max:255',
             'province' => 'required|string|max:255',
             'postal_code' => 'required|string|max:5',
+            'status' => 'required|in:tetap,domisili',
+            'family_card_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        Family::create($request->all());
+        $data = $request->except('family_card_image');
+
+        // Handle file upload
+        if ($request->hasFile('family_card_image')) {
+            $image = $request->file('family_card_image');
+            $imageName = time() . '_' . $request->family_card_number . '.' . $image->getClientOriginalExtension();
+            $imagePath = $image->storeAs('public/family-cards', $imageName);
+            $data['family_card_image'] = 'family-cards/' . $imageName;
+        }
+
+        Family::create($data);
 
         return redirect()->route('families.index')->with('success', 'Kartu Keluarga berhasil ditambahkan');
     }
@@ -83,9 +96,26 @@ class FamilyController extends Controller
             'city' => 'required|string|max:255',
             'province' => 'required|string|max:255',
             'postal_code' => 'required|string|max:5',
+            'status' => 'required|in:tetap,domisili',
+            'family_card_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $family->update($request->all());
+        $data = $request->except('family_card_image');
+
+        // Handle file upload
+        if ($request->hasFile('family_card_image')) {
+            // Delete old image if exists
+            if ($family->family_card_image) {
+                Storage::delete('public/' . $family->family_card_image);
+            }
+
+            $image = $request->file('family_card_image');
+            $imageName = time() . '_' . $request->family_card_number . '.' . $image->getClientOriginalExtension();
+            $imagePath = $image->storeAs('public/family-cards', $imageName);
+            $data['family_card_image'] = 'family-cards/' . $imageName;
+        }
+
+        $family->update($data);
 
         return redirect()->route('families.index')->with('success', 'Kartu Keluarga berhasil diperbarui');
     }
@@ -96,6 +126,12 @@ class FamilyController extends Controller
     public function destroy(string $id)
     {
         $family = Family::findOrFail($id);
+
+        // Delete associated image if exists
+        if ($family->family_card_image) {
+            Storage::delete('public/' . $family->family_card_image);
+        }
+
         $family->delete();
 
         return redirect()->route('families.index')->with('success', 'Kartu Keluarga berhasil dihapus');

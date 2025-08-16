@@ -19,6 +19,7 @@ class Family extends Model
         'province',
         'postal_code',
         'status',
+        'family_card_image',
     ];
 
     public function familyMembers(): HasMany

@@ -48,6 +48,17 @@
                         </span>
                     </dd>
                 </div>
+                @if($family->family_card_image)
+                <div class="bg-gray-50 px-3 py-4 sm:px-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Kartu Keluarga</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <div class="mt-2">
+                            <img src="{{ asset('storage/' . $family->family_card_image) }}" alt="Kartu Keluarga" class="max-w-md h-auto object-cover rounded-lg border shadow-sm">
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">Klik gambar untuk memperbesar</p>
+                    </dd>
+                </div>
+                @endif
             </dl>
         </div>
     </div>
@@ -64,7 +75,7 @@
                 <span class="sm:hidden">Tambah</span>
             </a>
         </div>
-        
+
         <!-- Mobile Card View -->
         <div class="lg:hidden">
             <div class="divide-y divide-gray-200">
@@ -82,18 +93,23 @@
                                 </span>
                             </div>
                         </div>
-                        
-                        <div class="text-sm text-gray-500 space-y-1">
+
+                                                <div class="text-sm text-gray-500 space-y-1">
                             <p><span class="font-medium">Tanggal Lahir:</span> {{ $member->date_of_birth->format('d/m/Y') }}</p>
                             <p><span class="font-medium">Status Kawin:</span> {{ $member->marital_status }}</p>
                             <p><span class="font-medium">Hubungan:</span> {{ $member->relationship_to_head }}</p>
-                            <p><span class="font-medium">Status:</span> 
+                            <p><span class="font-medium">Status:</span>
                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $member->status == 'tetap' ? 'bg-blue-100 text-blue-800' : 'bg-orange-100 text-orange-800' }}">
                                     {{ ucfirst($member->status) }}
                                 </span>
                             </p>
+                            @if($member->ktp_image)
+                            <p><span class="font-medium">KTP:</span>
+                                <img src="{{ asset('storage/' . $member->ktp_image) }}" alt="KTP {{ $member->name }}" class="mt-1 h-20 w-auto object-cover rounded border">
+                            </p>
+                            @endif
                         </div>
-                        
+
                         <div class="flex items-center justify-between pt-2">
                             <a href="{{ route('family-members.edit', $member->id) }}" class="text-yellow-600 hover:text-yellow-900 text-sm font-medium">Edit</a>
                             <form action="{{ route('family-members.destroy', $member->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus anggota keluarga ini?')">
@@ -124,6 +140,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status Perkawinan</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hubungan</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">KTP</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
@@ -141,6 +158,13 @@
                                 {{ ucfirst($member->status) }}
                             </span>
                         </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            @if($member->ktp_image)
+                                <img src="{{ asset('storage/' . $member->ktp_image) }}" alt="KTP" class="h-16 w-auto object-cover rounded border">
+                            @else
+                                <span class="text-gray-400 text-xs">Belum upload</span>
+                            @endif
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex space-x-2">
                                 <a href="{{ route('family-members.edit', $member->id) }}" class="text-yellow-600 hover:text-yellow-900">Edit</a>
@@ -154,7 +178,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">Belum ada anggota keluarga</td>
+                        <td colspan="9" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">Belum ada anggota keluarga</td>
                     </tr>
                     @endforelse
                 </tbody>

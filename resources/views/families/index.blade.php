@@ -36,12 +36,12 @@
                                 </span>
                             </div>
                         </div>
-                        
+
                         <div class="text-sm text-gray-500">
                             <p>{{ $family->address }}</p>
                             <p class="text-xs text-gray-400 mt-1">RT {{ $family->rt }} / RW {{ $family->rw }}</p>
                         </div>
-                        
+
                         <div class="flex items-center justify-between pt-2">
                             <div class="flex space-x-2">
                                 <a href="{{ route('families.show', $family->id) }}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">Lihat</a>
