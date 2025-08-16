@@ -228,7 +228,7 @@ class FamilyMemberSeeder extends Seeder
                 $maritalStatuses = ['BELUM KAWIN', 'KAWIN', 'CERAI HIDUP', 'CERAI MATI'];
 
                 $memberStatus = ['tetap', 'domisili'][rand(0, 1)];
-                
+
                 FamilyMember::create([
                     'family_id' => $family->id,
                     'nik' => '32010112345' . str_pad($family->id, 3, '0', STR_PAD_LEFT) . str_pad($i + 1, 2, '0', STR_PAD_LEFT),
