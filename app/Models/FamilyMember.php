@@ -17,6 +17,7 @@ class FamilyMember extends Model
         'marital_status',
         'relationship_to_head',
         'citizenship',
+        'status',
     ];
 
     protected $casts = [

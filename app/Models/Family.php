@@ -18,6 +18,7 @@ class Family extends Model
         'city',
         'province',
         'postal_code',
+        'status',
     ];
 
     public function familyMembers(): HasMany
