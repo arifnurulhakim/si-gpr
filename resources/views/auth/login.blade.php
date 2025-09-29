@@ -65,18 +65,21 @@
 
                 <form class="mt-8 space-y-6" action="{{ route('login') }}" method="POST">
                     @csrf
-                    
+
                     <div class="space-y-4">
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                                Email Address
+                                Email atau Nomor KK
                             </label>
-                            <input id="email" name="email" type="email" autocomplete="email" required
+                            <input id="email" name="email" type="text" autocomplete="email" required
                                    class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base @error('email') border-red-500 @enderror"
-                                   placeholder="Contoh: admin@ekk.com" value="{{ old('email') }}">
+                                   placeholder="Contoh: admin@ekk.com atau 3273011234567890" value="{{ old('email') }}">
                             @error('email')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
+                            <p class="mt-1 text-xs text-gray-500">
+                                Masukkan email admin atau nomor KK untuk login
+                            </p>
                         </div>
 
                         <div>
@@ -85,7 +88,7 @@
                             </label>
                             <input id="password" name="password" type="password" autocomplete="current-password" required
                                    class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base @error('password') border-red-500 @enderror"
-                                   placeholder="Contoh: password">
+                                   placeholder="Password admin atau tanggal lahir (YYYY-MM-DD)">
                             @error('password')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror

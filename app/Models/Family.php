@@ -18,6 +18,7 @@ class Family extends Model
         'city',
         'province',
         'postal_code',
+        'block',
         'status',
         'family_card_image',
     ];
@@ -35,5 +36,13 @@ class Family extends Model
     public function familyCardRequests(): HasMany
     {
         return $this->hasMany(FamilyCardRequest::class);
+    }
+
+    /**
+     * Get the user associated with this family
+     */
+    public function user()
+    {
+        return $this->hasOne(User::class, 'family_card_number', 'family_card_number');
     }
 }

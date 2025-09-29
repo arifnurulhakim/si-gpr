@@ -12,9 +12,24 @@ class FamilyMemberController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $familyMembers = FamilyMember::with('family')->latest()->paginate(10);
+        $perPage = $request->get('per_page', 10);
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortOrder = $request->get('sort_order', 'desc');
+
+        $query = FamilyMember::with('family');
+
+        // Apply sorting
+        if (in_array($sortBy, ['nik', 'name', 'gender', 'date_of_birth', 'marital_status', 'relationship_to_head', 'citizenship', 'status', 'created_at'])) {
+            $query->orderBy($sortBy, $sortOrder);
+        } else {
+            $query->latest();
+        }
+
+        $familyMembers = $query->paginate($perPage);
+        $familyMembers->appends($request->query());
+
         return view('family-members.index', compact('familyMembers'));
     }
 

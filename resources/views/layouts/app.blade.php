@@ -7,6 +7,7 @@
     <title>@yield('title', 'E-Kartu Keluarga')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     @vite(['resources/js/app.js'])
+    @yield('styles')
 </head>
 <body class="bg-gray-50">
     @auth
@@ -37,19 +38,45 @@
                         Dashboard
                     </a>
 
-                    <a href="{{ route('families.index') }}" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors {{ request()->routeIs('families.*') ? 'bg-indigo-50 text-indigo-700' : '' }}">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                        Kartu Keluarga
-                    </a>
+                    @if(auth()->user()->isAdmin())
+                    <!-- Data Penduduk Dropdown -->
+                    <div class="relative">
+                        <button id="data-penduduk-toggle" class="flex items-center justify-between w-full px-4 py-3 text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors {{ request()->routeIs('families.*') || request()->routeIs('family-members.*') ? 'bg-indigo-50 text-indigo-700' : '' }}">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                                Data Penduduk
+                            </div>
+                            <svg class="w-4 h-4 transition-transform duration-200" id="data-penduduk-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
 
-                    <a href="{{ route('family-members.index') }}" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors {{ request()->routeIs('family-members.*') ? 'bg-indigo-50 text-indigo-700' : '' }}">
+                        <div id="data-penduduk-menu" class="hidden mt-2 ml-8 space-y-1">
+                            <a href="{{ route('families.index') }}" class="flex items-center px-4 py-2 text-sm text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors {{ request()->routeIs('families.*') ? 'bg-indigo-50 text-indigo-700' : '' }}">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                                Kartu Keluarga
+                            </a>
+                            <a href="{{ route('family-members.index') }}" class="flex items-center px-4 py-2 text-sm text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors {{ request()->routeIs('family-members.*') ? 'bg-indigo-50 text-indigo-700' : '' }}">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                </svg>
+                                Masyarakat
+                            </a>
+                        </div>
+                    </div>
+                    @else
+                    <!-- User Menu -->
+                    <a href="{{ route('my-family') }}" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors {{ request()->routeIs('my-family') ? 'bg-indigo-50 text-indigo-700' : '' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                         </svg>
-                        Anggota Keluarga
+                        Data Keluarga Saya
                     </a>
+                    @endif
                 </div>
             </nav>
 
@@ -63,6 +90,9 @@
                         <div class="ml-3">
                             <p class="text-sm font-medium text-gray-700">{{ Auth::user()->name }}</p>
                             <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ Auth::user()->isAdmin() ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' }}">
+                                {{ Auth::user()->isAdmin() ? 'Admin' : 'User' }}
+                            </span>
                         </div>
                     </div>
                     <a href="{{ route('logout') }}"
@@ -102,23 +132,13 @@
                 </div>
             </div>
 
+
             <!-- Page Content -->
             <main class="p-4 sm:p-6">
-                @if(session('success'))
-                    <div class="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-                @if(session('error'))
-                    <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                        {{ session('error') }}
-                    </div>
-                @endif
-
                 @yield('content')
             </main>
         </div>
+
 
         <!-- Mobile sidebar toggle script -->
         <script>
@@ -142,6 +162,29 @@
                 mobileMenuButton.addEventListener('click', toggleSidebar);
                 overlay.addEventListener('click', toggleSidebar);
 
+                // Data Penduduk dropdown toggle
+                const dataPendudukToggle = document.getElementById('data-penduduk-toggle');
+                const dataPendudukMenu = document.getElementById('data-penduduk-menu');
+                const dataPendudukArrow = document.getElementById('data-penduduk-arrow');
+
+                dataPendudukToggle.addEventListener('click', function() {
+                    const isOpen = !dataPendudukMenu.classList.contains('hidden');
+
+                    if (isOpen) {
+                        dataPendudukMenu.classList.add('hidden');
+                        dataPendudukArrow.style.transform = 'rotate(0deg)';
+                    } else {
+                        dataPendudukMenu.classList.remove('hidden');
+                        dataPendudukArrow.style.transform = 'rotate(180deg)';
+                    }
+                });
+
+                // Auto-open dropdown if on families or family-members route
+                if (window.location.pathname.includes('/families') || window.location.pathname.includes('/family-members')) {
+                    dataPendudukMenu.classList.remove('hidden');
+                    dataPendudukArrow.style.transform = 'rotate(180deg)';
+                }
+
                 // Close sidebar on window resize if switching to desktop
                 window.addEventListener('resize', function() {
                     if (window.innerWidth >= 1024) {
@@ -152,6 +195,7 @@
                         overlay.classList.add('hidden');
                     }
                 });
+
             });
         </script>
     @else
@@ -181,11 +225,18 @@
                 </div>
             </nav>
 
+
             <!-- Guest Content -->
             <main class="max-w-7xl mx-auto py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
                 @yield('content')
             </main>
         </div>
+
     @endauth
+
+    <!-- Notifications - Global -->
+    @include('components.notification')
+
+    @yield('scripts')
 </body>
 </html>

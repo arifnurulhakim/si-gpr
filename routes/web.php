@@ -12,8 +12,19 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::resource('families', FamilyController::class);
-    Route::resource('family-members', FamilyMemberController::class);
+
+    // Admin only routes
+    Route::middleware(['role:admin'])->group(function () {
+        Route::resource('families', FamilyController::class);
+        Route::resource('family-members', FamilyMemberController::class);
+        Route::get('families/export/excel', [FamilyController::class, 'export'])->name('families.export');
+        Route::get('families/{id}/export/pdf', [FamilyController::class, 'exportPdf'])->name('families.export.pdf');
+    });
+
+    // User routes (can view their own family data)
+    Route::middleware(['role:user'])->group(function () {
+        Route::get('/my-family', [FamilyController::class, 'myFamily'])->name('my-family');
+    });
 });
 
 Auth::routes();

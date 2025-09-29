@@ -28,6 +28,42 @@ class LoginController extends Controller
     protected $redirectTo = '/home';
 
     /**
+     * Get the login username to be used by the controller.
+     *
+     * @return string
+     */
+    public function username()
+    {
+        $login = request()->input('email');
+
+        // Check if login is email or family card number
+        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+            request()->merge(['email' => $login]);
+            return 'email';
+        } else {
+            request()->merge(['family_card_number' => $login]);
+            return 'family_card_number';
+        }
+    }
+
+    /**
+     * Get the needed authorization credentials from the request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    protected function credentials(\Illuminate\Http\Request $request)
+    {
+        $login = $request->input('email');
+
+        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+            return $request->only('email', 'password');
+        } else {
+            return $request->only('family_card_number', 'password');
+        }
+    }
+
+    /**
      * Create a new controller instance.
      *
      * @return void

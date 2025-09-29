@@ -119,6 +119,17 @@
                     </div>
 
                     <div>
+                        <label for="block" class="block text-sm font-medium text-gray-700">Blok</label>
+                        <input type="text" name="block" id="block" value="{{ old('block', $family->block) }}"
+                               placeholder="Contoh: D1-12"
+                               maxlength="10"
+                               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-base px-3 sm:px-4 py-2 sm:py-3">
+                        @error('block')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
                         <label for="status" class="block text-sm font-medium text-gray-700">Status Keluarga</label>
                         <select name="status" id="status" required
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-base px-3 sm:px-4 py-2 sm:py-3">
