@@ -68,6 +68,30 @@
                             </a>
                         </div>
                     </div>
+
+                    <!-- Periode Air Dropdown -->
+                    <div class="relative">
+                        <button id="periode-air-toggle" class="flex items-center justify-between w-full px-4 py-3 text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors {{ request()->routeIs('water-periods.*') || request()->routeIs('water-usage.*') ? 'bg-indigo-50 text-indigo-700' : '' }}">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                                </svg>
+                                Periode Air
+                            </div>
+                            <svg class="w-4 h-4 transition-transform duration-200" id="periode-air-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        <div id="periode-air-menu" class="hidden mt-2 ml-8 space-y-1">
+                            <a href="{{ route('water-periods.index') }}" class="flex items-center px-4 py-2 text-sm text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors {{ request()->routeIs('water-periods.*') ? 'bg-indigo-50 text-indigo-700' : '' }}">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                Daftar Periode
+                            </a>
+                        </div>
+                    </div>
                     @else
                     <!-- User Menu -->
                     <a href="{{ route('my-family') }}" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors {{ request()->routeIs('my-family') ? 'bg-indigo-50 text-indigo-700' : '' }}">
@@ -75,6 +99,13 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                         </svg>
                         Data Keluarga Saya
+                    </a>
+
+                    <a href="{{ route('my-water-bills') }}" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors {{ request()->routeIs('my-water-bills') || request()->routeIs('my-water-usage.*') ? 'bg-indigo-50 text-indigo-700' : '' }}">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                        Tagihan Air Saya
                     </a>
                     @endif
                 </div>
@@ -167,22 +198,49 @@
                 const dataPendudukMenu = document.getElementById('data-penduduk-menu');
                 const dataPendudukArrow = document.getElementById('data-penduduk-arrow');
 
-                dataPendudukToggle.addEventListener('click', function() {
-                    const isOpen = !dataPendudukMenu.classList.contains('hidden');
+                if (dataPendudukToggle) {
+                    dataPendudukToggle.addEventListener('click', function() {
+                        const isOpen = !dataPendudukMenu.classList.contains('hidden');
 
-                    if (isOpen) {
-                        dataPendudukMenu.classList.add('hidden');
-                        dataPendudukArrow.style.transform = 'rotate(0deg)';
-                    } else {
+                        if (isOpen) {
+                            dataPendudukMenu.classList.add('hidden');
+                            dataPendudukArrow.style.transform = 'rotate(0deg)';
+                        } else {
+                            dataPendudukMenu.classList.remove('hidden');
+                            dataPendudukArrow.style.transform = 'rotate(180deg)';
+                        }
+                    });
+
+                    // Auto-open dropdown if on families or family-members route
+                    if (window.location.pathname.includes('/families') || window.location.pathname.includes('/family-members')) {
                         dataPendudukMenu.classList.remove('hidden');
                         dataPendudukArrow.style.transform = 'rotate(180deg)';
                     }
-                });
+                }
 
-                // Auto-open dropdown if on families or family-members route
-                if (window.location.pathname.includes('/families') || window.location.pathname.includes('/family-members')) {
-                    dataPendudukMenu.classList.remove('hidden');
-                    dataPendudukArrow.style.transform = 'rotate(180deg)';
+                // Periode Air dropdown toggle
+                const periodeAirToggle = document.getElementById('periode-air-toggle');
+                const periodeAirMenu = document.getElementById('periode-air-menu');
+                const periodeAirArrow = document.getElementById('periode-air-arrow');
+
+                if (periodeAirToggle) {
+                    periodeAirToggle.addEventListener('click', function() {
+                        const isOpen = !periodeAirMenu.classList.contains('hidden');
+
+                        if (isOpen) {
+                            periodeAirMenu.classList.add('hidden');
+                            periodeAirArrow.style.transform = 'rotate(0deg)';
+                        } else {
+                            periodeAirMenu.classList.remove('hidden');
+                            periodeAirArrow.style.transform = 'rotate(180deg)';
+                        }
+                    });
+
+                    // Auto-open dropdown if on water-periods or water-usage route
+                    if (window.location.pathname.includes('/water-periods') || window.location.pathname.includes('/water-usage')) {
+                        periodeAirMenu.classList.remove('hidden');
+                        periodeAirArrow.style.transform = 'rotate(180deg)';
+                    }
                 }
 
                 // Close sidebar on window resize if switching to desktop

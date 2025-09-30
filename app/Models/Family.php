@@ -38,6 +38,27 @@ class Family extends Model
         return $this->hasMany(FamilyCardRequest::class);
     }
 
+    public function waterUsageRecords(): HasMany
+    {
+        return $this->hasMany(WaterUsageRecord::class);
+    }
+
+    public function pendingWaterBills()
+    {
+        return $this->waterUsageRecords()
+            ->whereIn('payment_status', ['PENDING', 'OVERDUE', 'PAYMENT_UPLOADED'])
+            ->with('waterPeriod');
+    }
+
+    public function overdueWaterBills()
+    {
+        return $this->waterUsageRecords()
+            ->where('payment_status', 'OVERDUE')
+            ->whereHas('waterPeriod', function($query) {
+                $query->where('due_date', '<', now());
+            });
+    }
+
     /**
      * Get the user associated with this family
      */
