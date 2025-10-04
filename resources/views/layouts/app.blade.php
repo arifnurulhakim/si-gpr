@@ -92,6 +92,30 @@
                             </a>
                         </div>
                     </div>
+
+                    <!-- Periode Kas Dropdown -->
+                    <div class="space-y-1">
+                        <button onclick="toggleMenu('periode-kas-menu', 'periode-kas-arrow')" class="flex items-center justify-between w-full px-4 py-3 text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors {{ request()->routeIs('cash-periods.*') || request()->routeIs('cash-records.*') ? 'bg-indigo-50 text-indigo-700' : '' }}">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                </svg>
+                                Periode Kas
+                            </div>
+                            <svg class="w-4 h-4 transition-transform duration-200" id="periode-kas-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        <div id="periode-kas-menu" class="hidden mt-2 ml-8 space-y-1">
+                            <a href="{{ route('cash-periods.index') }}" class="flex items-center px-4 py-2 text-sm text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors {{ request()->routeIs('cash-periods.*') ? 'bg-indigo-50 text-indigo-700' : '' }}">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                Daftar Periode
+                            </a>
+                        </div>
+                    </div>
                     @else
                     <!-- User Menu -->
                     <a href="{{ route('my-family') }}" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors {{ request()->routeIs('my-family') ? 'bg-indigo-50 text-indigo-700' : '' }}">
@@ -106,6 +130,13 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
                         </svg>
                         Tagihan Air Saya
+                    </a>
+
+                    <a href="{{ route('my-cash-bills') }}" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors {{ request()->routeIs('my-cash-bills') || request()->routeIs('my-cash-usage.*') ? 'bg-indigo-50 text-indigo-700' : '' }}">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                        </svg>
+                        Tagihan Kas Saya
                     </a>
                     @endif
                 </div>
@@ -243,6 +274,18 @@
                     }
                 }
 
+                // Periode Kas dropdown toggle
+                const periodeKasMenu = document.getElementById('periode-kas-menu');
+                const periodeKasArrow = document.getElementById('periode-kas-arrow');
+
+                if (periodeKasMenu && periodeKasArrow) {
+                    // Auto-open dropdown if on cash-periods or cash-records route
+                    if (window.location.pathname.includes('/cash-periods') || window.location.pathname.includes('/cash-records')) {
+                        periodeKasMenu.classList.remove('hidden');
+                        periodeKasArrow.style.transform = 'rotate(180deg)';
+                    }
+                }
+
                 // Close sidebar on window resize if switching to desktop
                 window.addEventListener('resize', function() {
                     if (window.innerWidth >= 1024) {
@@ -255,6 +298,24 @@
                 });
 
             });
+
+            // Global toggleMenu function for dropdown menus
+            function toggleMenu(menuId, arrowId) {
+                const menu = document.getElementById(menuId);
+                const arrow = document.getElementById(arrowId);
+
+                if (menu && arrow) {
+                    const isOpen = !menu.classList.contains('hidden');
+
+                    if (isOpen) {
+                        menu.classList.add('hidden');
+                        arrow.style.transform = 'rotate(0deg)';
+                    } else {
+                        menu.classList.remove('hidden');
+                        arrow.style.transform = 'rotate(180deg)';
+                    }
+                }
+            }
         </script>
     @else
         <!-- Guest Layout -->

@@ -7,6 +7,8 @@ use App\Http\Controllers\FamilyController;
 use App\Http\Controllers\FamilyMemberController;
 use App\Http\Controllers\WaterPeriodController;
 use App\Http\Controllers\WaterUsageController;
+use App\Http\Controllers\CashPeriodController;
+use App\Http\Controllers\CashRecordController;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -40,6 +42,25 @@ Route::middleware(['auth'])->group(function () {
 
         // Print receipt
         Route::get('water-periods/{waterPeriod}/records/{waterUsageRecord}/print', [WaterUsageController::class, 'printReceipt'])->name('water-usage.print');
+
+        // Cash Periods
+        Route::resource('cash-periods', CashPeriodController::class);
+        Route::post('cash-periods/{cashPeriod}/close', [CashPeriodController::class, 'close'])->name('cash-periods.close');
+
+        // Cash Records (nested under cash periods)
+        Route::get('cash-periods/{cashPeriod}/records/create', [CashRecordController::class, 'create'])->name('cash-records.create');
+        Route::post('cash-periods/{cashPeriod}/records', [CashRecordController::class, 'store'])->name('cash-records.store');
+        Route::get('cash-periods/{cashPeriod}/records/{cashRecord}', [CashRecordController::class, 'show'])->name('cash-records.show');
+        Route::get('cash-periods/{cashPeriod}/records/{cashRecord}/edit', [CashRecordController::class, 'edit'])->name('cash-records.edit');
+        Route::put('cash-periods/{cashPeriod}/records/{cashRecord}', [CashRecordController::class, 'update'])->name('cash-records.update');
+        Route::delete('cash-periods/{cashPeriod}/records/{cashRecord}', [CashRecordController::class, 'destroy'])->name('cash-records.destroy');
+
+        // Payment proof upload and verification
+        Route::post('cash-periods/{cashPeriod}/records/{cashRecord}/upload-proof', [CashRecordController::class, 'uploadPaymentProof'])->name('cash-records.upload-proof');
+        Route::post('cash-periods/{cashPeriod}/records/{cashRecord}/verify', [CashRecordController::class, 'verifyPayment'])->name('cash-records.verify');
+
+        // Print receipt
+        Route::get('cash-periods/{cashPeriod}/records/{cashRecord}/print', [CashRecordController::class, 'printReceipt'])->name('cash-records.print');
     });
 
     // User routes (can view their own family data)
@@ -51,6 +72,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/my-water-periods/{waterPeriod}/records/{waterUsageRecord}', [WaterUsageController::class, 'show'])->name('my-water-usage.show');
         Route::post('/my-water-periods/{waterPeriod}/records/{waterUsageRecord}/upload-proof', [WaterUsageController::class, 'uploadPaymentProof'])->name('my-water-usage.upload-proof');
         Route::get('/my-water-periods/{waterPeriod}/records/{waterUsageRecord}/print', [WaterUsageController::class, 'printReceipt'])->name('my-water-usage.print');
+
+        // Cash usage for users
+        Route::get('/my-cash-bills', [CashRecordController::class, 'myCashBills'])->name('my-cash-bills');
+        Route::get('/my-cash-periods/{cashPeriod}/records/{cashRecord}', [CashRecordController::class, 'show'])->name('my-cash-usage.show');
+        Route::post('/my-cash-periods/{cashPeriod}/records/{cashRecord}/upload-proof', [CashRecordController::class, 'uploadPaymentProof'])->name('my-cash-usage.upload-proof');
+        Route::get('/my-cash-periods/{cashPeriod}/records/{cashRecord}/print', [CashRecordController::class, 'printReceipt'])->name('my-cash-usage.print');
     });
 });
 

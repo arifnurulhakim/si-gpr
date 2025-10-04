@@ -66,4 +66,34 @@ class Family extends Model
     {
         return $this->hasOne(User::class, 'family_card_number', 'family_card_number');
     }
+
+    /**
+     * Get the cash records for this family
+     */
+    public function cashRecords(): HasMany
+    {
+        return $this->hasMany(CashRecord::class);
+    }
+
+    /**
+     * Get pending cash bills for this family
+     */
+    public function pendingCashBills()
+    {
+        return $this->cashRecords()
+            ->whereIn('payment_status', ['PENDING', 'OVERDUE', 'PAYMENT_UPLOADED'])
+            ->with('cashPeriod');
+    }
+
+    /**
+     * Get overdue cash bills for this family
+     */
+    public function overdueCashBills()
+    {
+        return $this->cashRecords()
+            ->where('payment_status', 'OVERDUE')
+            ->whereHas('cashPeriod', function($query) {
+                $query->where('due_date', '<', now());
+            });
+    }
 }
