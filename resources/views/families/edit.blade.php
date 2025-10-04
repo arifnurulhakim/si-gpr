@@ -121,9 +121,10 @@
                     <div>
                         <label for="block" class="block text-sm font-medium text-gray-700">Blok</label>
                         <input type="text" name="block" id="block" value="{{ old('block', $family->block) }}"
-                               placeholder="Contoh: D1-12"
+                               placeholder="Contoh: D1-12 atau D1-12A"
                                maxlength="10"
                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-base px-3 sm:px-4 py-2 sm:py-3">
+                        <p class="mt-1 text-sm text-gray-500">Format: Huruf-Angka-Angka atau Huruf-Angka-Angka-Huruf (contoh: D1-12 atau D1-12A)</p>
                         @error('block')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -185,4 +186,39 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-format block input (D1-12 or D1-12A format)
+    const blockInput = document.getElementById('block');
+    if (blockInput) {
+        blockInput.addEventListener('input', function(e) {
+            let value = e.target.value.toUpperCase();
+
+            // Remove any non-alphanumeric characters except dash
+            value = value.replace(/[^A-Z0-9-]/g, '');
+
+            // Auto-format: D1-12 or D1-12A
+            if (value.length > 0) {
+                // First character should be letter
+                if (!/^[A-Z]/.test(value)) {
+                    value = value.replace(/^[^A-Z]*/, '');
+                }
+
+                // After first letter, add dash after number
+                if (value.length > 1 && /^[A-Z]\d+$/.test(value)) {
+                    value = value.replace(/^([A-Z])(\d+)$/, '$1$2-');
+                }
+
+                // Limit to format D1-12A (max 6 characters) or D1-12 (max 5 characters)
+                if (value.length > 6) {
+                    value = value.substring(0, 6);
+                }
+            }
+
+            e.target.value = value;
+        });
+    }
+});
+</script>
 @endsection

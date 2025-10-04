@@ -56,7 +56,7 @@ class FamilyController extends Controller
             'city' => 'required|string|max:255',
             'province' => 'required|string|max:255',
             'postal_code' => 'required|string|max:5',
-            'block' => 'nullable|string|max:10|regex:/^[A-Z][0-9]+-[0-9]+$/',
+            'block' => 'nullable|string|max:10|regex:/^[A-Z][0-9]+-[0-9]+[A-Z]?$/',
             'status' => 'required|in:tetap,domisili',
             'family_card_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'family_members' => 'required|array|min:1',
@@ -210,7 +210,7 @@ class FamilyController extends Controller
             'city' => 'required|string|max:255',
             'province' => 'required|string|max:255',
             'postal_code' => 'required|string|max:5',
-            'block' => 'nullable|string|max:10|regex:/^[A-Z][0-9]+-[0-9]+$/',
+            'block' => 'nullable|string|max:10|regex:/^[A-Z][0-9]+-[0-9]+[A-Z]?$/',
             'status' => 'required|in:tetap,domisili',
             'family_card_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
