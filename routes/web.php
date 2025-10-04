@@ -37,6 +37,9 @@ Route::middleware(['auth'])->group(function () {
         // Payment proof upload and verification
         Route::post('water-periods/{waterPeriod}/records/{waterUsageRecord}/upload-proof', [WaterUsageController::class, 'uploadPaymentProof'])->name('water-usage.upload-proof');
         Route::post('water-periods/{waterPeriod}/records/{waterUsageRecord}/verify', [WaterUsageController::class, 'verifyPayment'])->name('water-usage.verify');
+
+        // Print receipt
+        Route::get('water-periods/{waterPeriod}/records/{waterUsageRecord}/print', [WaterUsageController::class, 'printReceipt'])->name('water-usage.print');
     });
 
     // User routes (can view their own family data)
@@ -47,6 +50,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/my-water-bills', [WaterUsageController::class, 'myWaterBills'])->name('my-water-bills');
         Route::get('/my-water-periods/{waterPeriod}/records/{waterUsageRecord}', [WaterUsageController::class, 'show'])->name('my-water-usage.show');
         Route::post('/my-water-periods/{waterPeriod}/records/{waterUsageRecord}/upload-proof', [WaterUsageController::class, 'uploadPaymentProof'])->name('my-water-usage.upload-proof');
+        Route::get('/my-water-periods/{waterPeriod}/records/{waterUsageRecord}/print', [WaterUsageController::class, 'printReceipt'])->name('my-water-usage.print');
     });
 });
 

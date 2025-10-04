@@ -250,4 +250,14 @@ class WaterUsageController extends Controller
             'cleaned_count' => $cleanedCount
         ]);
     }
+
+    /**
+     * Print water bill receipt
+     */
+    public function printReceipt(WaterPeriod $waterPeriod, WaterUsageRecord $waterUsageRecord)
+    {
+        $waterUsageRecord->load(['family', 'waterPeriod', 'recordedBy', 'verifiedBy']);
+
+        return view('water-usage.print-receipt', compact('waterPeriod', 'waterUsageRecord'));
+    }
 }
