@@ -15,7 +15,7 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
-        
+
         // For admin users, show full dashboard
         if ($user->role === 'admin') {
             $totalFamilies = Family::count();
@@ -44,11 +44,11 @@ class DashboardController extends Controller
                 'recentWaterRecords'
             ));
         }
-        
+
         // For regular users, show only water and cash bills counts
         $userWaterBillsCount = 0;
         $userCashBillsCount = 0;
-        
+
         if ($user->residentBlock) {
             $userWaterBillsCount = $user->residentBlock->waterUsageRecords()->count();
             $userCashBillsCount = $user->residentBlock->cashRecords()->count();
