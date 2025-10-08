@@ -25,6 +25,7 @@
                     <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
                     <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
                     <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                    <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
                 </select>
                 <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,59 +35,33 @@
             </div>
             <span class="text-sm text-gray-500">per halaman</span>
         </div>
-
-        <!-- Sort Options -->
-        <div class="flex items-center space-x-3">
-            <label for="sort_by" class="text-sm font-medium text-gray-700">Urutkan:</label>
-            <div class="relative">
-                <select id="sort_by" name="sort_by" onchange="updateSort(this.value, '{{ request('sort_order', 'desc') }}')" class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm font-medium text-gray-700 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
-                    <option value="created_at" {{ request('sort_by', 'created_at') == 'created_at' ? 'selected' : '' }}>Tanggal Dibuat</option>
-                    <option value="period_name" {{ request('sort_by') == 'period_name' ? 'selected' : '' }}>Nama Periode</option>
-                    <option value="due_date" {{ request('sort_by') == 'due_date' ? 'selected' : '' }}>Jatuh Tempo</option>
-                    <option value="status" {{ request('sort_by') == 'status' ? 'selected' : '' }}>Status</option>
-                </select>
-                <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </div>
-            </div>
-            <button onclick="updateSort('{{ request('sort_by', 'created_at') }}', '{{ request('sort_order', 'desc') == 'desc' ? 'asc' : 'desc' }}')" class="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                @if(request('sort_order', 'desc') == 'desc')
-                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                </svg>
-                @else
-                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                </svg>
-                @endif
-            </button>
-        </div>
     </div>
 
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
     <!-- Mobile Card View -->
-    <div class="lg:hidden space-y-4">
+        <div class="lg:hidden">
+            <div class="divide-y divide-gray-200">
         @forelse($periods as $period)
-        <div class="bg-white shadow rounded-lg p-4">
+                <div class="p-4">
+                    <div class="space-y-3">
             <div class="flex justify-between items-start">
                 <div class="flex-1">
                     <p class="text-sm font-medium text-gray-900">{{ $period->period_name }}</p>
                     <p class="text-sm text-gray-600">{{ $period->period_code }}</p>
                 </div>
                 <div class="flex items-center space-x-2">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $period->status === 'ACTIVE' ? 'bg-green-100 text-green-800' : ($period->status === 'CLOSED' ? 'bg-gray-100 text-gray-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $period->status == 'ACTIVE' ? 'bg-green-100 text-green-800' : ($period->status == 'CLOSED' ? 'bg-gray-100 text-gray-800' : 'bg-blue-100 text-blue-800') }}">
                         {{ $period->status }}
+                    </span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                    {{ $period->cash_records_count }} record
                     </span>
                 </div>
             </div>
 
-            <div class="text-sm text-gray-500 mt-2">
-                <p>Uang Kas: Rp {{ number_format($period->cash_amount) }}</p>
-                <p>Uang Ronda: Rp {{ number_format($period->patrol_amount) }}</p>
-                <p>Lain-lain: Rp {{ number_format($period->other_amount) }}</p>
-                <p>Total: Rp {{ number_format($period->total_amount) }}</p>
+                        <div class="text-sm text-gray-500">
                 <p>Due: {{ $period->due_date->format('d M Y') }}</p>
+                            <p class="text-xs text-gray-400 mt-1">Total: Rp {{ number_format($period->total_amount) }}</p>
             </div>
 
             <div class="flex items-center justify-between pt-2">
@@ -102,14 +77,16 @@
                     </form>
                     @endif
                     <button onclick="confirmPermanentDelete('{{ $period->id }}', '{{ $period->period_name }}')" class="text-red-600 hover:text-red-900 text-sm font-medium">Hapus Permanen</button>
+                            </div>
                 </div>
             </div>
         </div>
         @empty
         <div class="p-8 text-center">
-            <p class="text-sm text-gray-500">Belum ada periode kas</p>
+                    <p class="text-sm text-gray-500">Belum ada data periode kas</p>
         </div>
         @endforelse
+            </div>
     </div>
 
     <!-- Desktop Table View -->
@@ -117,45 +94,110 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Periode</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uang Kas</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uang Ronda</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lain-lain</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jatuh Tempo</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'period_name', 'sort_order' => request('sort_by') == 'period_name' && request('sort_order') == 'asc' ? 'desc' : 'asc']) }}" class="flex items-center space-x-1 hover:text-gray-700 group">
+                                <span>Nama Periode</span>
+                                <div class="flex flex-col">
+                                    @if(request('sort_by') == 'period_name')
+                                        @if(request('sort_order') == 'asc')
+                                            <svg class="w-3 h-3 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        @else
+                                            <svg class="w-3 h-3 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        @endif
+                                    @else
+                                        <svg class="w-3 h-3 text-gray-300 group-hover:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    @endif
+                                </div>
+                            </a>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'period_code', 'sort_order' => request('sort_by') == 'period_code' && request('sort_order') == 'asc' ? 'desc' : 'asc']) }}" class="flex items-center space-x-1 hover:text-gray-700 group">
+                                <span>Kode Periode</span>
+                                <div class="flex flex-col">
+                                    @if(request('sort_by') == 'period_code')
+                                        @if(request('sort_order') == 'asc')
+                                            <svg class="w-3 h-3 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        @else
+                                            <svg class="w-3 h-3 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        @endif
+                                    @else
+                                        <svg class="w-3 h-3 text-gray-300 group-hover:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    @endif
+                                </div>
+                            </a>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'due_date', 'sort_order' => request('sort_by') == 'due_date' && request('sort_order') == 'asc' ? 'desc' : 'asc']) }}" class="flex items-center space-x-1 hover:text-gray-700 group">
+                                <span>Jatuh Tempo</span>
+                                <div class="flex flex-col">
+                                    @if(request('sort_by') == 'due_date')
+                                        @if(request('sort_order') == 'asc')
+                                            <svg class="w-3 h-3 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        @else
+                                            <svg class="w-3 h-3 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        @endif
+                                    @else
+                                        <svg class="w-3 h-3 text-gray-300 group-hover:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    @endif
+                                </div>
+                            </a>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'status', 'sort_order' => request('sort_by') == 'status' && request('sort_order') == 'asc' ? 'desc' : 'asc']) }}" class="flex items-center space-x-1 hover:text-gray-700 group">
+                                <span>Status</span>
+                                <div class="flex flex-col">
+                                    @if(request('sort_by') == 'status')
+                                        @if(request('sort_order') == 'asc')
+                                            <svg class="w-3 h-3 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        @else
+                                            <svg class="w-3 h-3 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        @endif
+                                    @else
+                                        <svg class="w-3 h-3 text-gray-300 group-hover:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    @endif
+                                </div>
+                            </a>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Record</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
                 @forelse($periods as $period)
                 <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div>
-                            <div class="text-sm font-medium text-gray-900">{{ $period->period_name }}</div>
-                            <div class="text-sm text-gray-500">{{ $period->period_code }}</div>
-                        </div>
-                    </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $period->period_name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $period->period_code }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $period->due_date->format('d M Y') }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        Rp {{ number_format($period->cash_amount) }}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        Rp {{ number_format($period->patrol_amount) }}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        Rp {{ number_format($period->other_amount) }}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        Rp {{ number_format($period->total_amount) }}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {{ $period->due_date->format('d M Y') }}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $period->status === 'ACTIVE' ? 'bg-green-100 text-green-800' : ($period->status === 'CLOSED' ? 'bg-gray-100 text-gray-800' : 'bg-yellow-100 text-yellow-800') }}">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $period->status == 'ACTIVE' ? 'bg-green-100 text-green-800' : ($period->status == 'CLOSED' ? 'bg-gray-100 text-gray-800' : 'bg-blue-100 text-blue-800') }}">
                             {{ $period->status }}
                         </span>
                     </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $period->cash_records_count }} record</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div class="flex space-x-2">
                             <a href="{{ route('cash-periods.show', $period->id) }}" class="text-indigo-600 hover:text-indigo-900" title="Lihat">
@@ -189,7 +231,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="8" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">Belum ada periode kas</td>
+                        <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">Belum ada data periode kas</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -248,6 +290,7 @@
         </div>
     </div>
     @endif
+    </div>
 </div>
 
 <!-- Permanent Delete Confirmation Modal -->
@@ -288,13 +331,7 @@
 function updatePerPage(value) {
     const url = new URL(window.location);
     url.searchParams.set('per_page', value);
-    window.location.href = url.toString();
-}
-
-function updateSort(sortBy, sortOrder) {
-    const url = new URL(window.location);
-    url.searchParams.set('sort_by', sortBy);
-    url.searchParams.set('sort_order', sortOrder);
+    url.searchParams.delete('page'); // Reset to first page
     window.location.href = url.toString();
 }
 

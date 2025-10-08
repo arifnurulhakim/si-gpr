@@ -6,6 +6,7 @@ use App\Models\CashPeriod;
 use App\Models\CashRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class CashPeriodController extends Controller
 {
@@ -15,16 +16,16 @@ class CashPeriodController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->get('per_page', 10);
-        $sortBy = $request->get('sort_by', 'created_at');
+        $sortBy = $request->get('sort_by', 'period_code');
         $sortOrder = $request->get('sort_order', 'desc');
 
-        $query = CashPeriod::with('createdBy');
+        $query = CashPeriod::withCount('cashRecords');
 
         // Apply sorting
         if (in_array($sortBy, ['period_name', 'period_code', 'due_date', 'status', 'created_at'])) {
             $query->orderBy($sortBy, $sortOrder);
         } else {
-            $query->latest();
+            $query->orderBy('period_code', 'desc');
         }
 
         $periods = $query->paginate($perPage);
@@ -180,7 +181,7 @@ class CashPeriodController extends Controller
         foreach ($period->cashRecords as $record) {
             // Delete payment proof file if exists
             if ($record->payment_proof_path) {
-                \Storage::disk('public')->delete($record->payment_proof_path);
+                Storage::disk('public')->delete($record->payment_proof_path);
             }
             $record->delete();
         }
