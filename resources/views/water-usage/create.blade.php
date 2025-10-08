@@ -44,7 +44,7 @@
                         <option value="">-- Pilih Blok --</option>
                         @foreach($residentBlocks as $residentBlock)
                             <option value="{{ $residentBlock->id }}" {{ old('block_id') == $residentBlock->id ? 'selected' : '' }}>
-                                {{ $residentBlock->block }} - {{ $residentBlock->family->head_of_family_name ?? 'N/A' }}
+                                {{ $residentBlock->block }} - {{ $residentBlock->resident ? $residentBlock->resident->name : 'Blok Kosong' }}
                             </option>
                         @endforeach
                     </select>

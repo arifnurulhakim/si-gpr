@@ -82,7 +82,7 @@ class CashPeriodController extends Controller
         $sortBy = $request->get('sort_by', 'created_at');
         $sortOrder = $request->get('sort_order', 'desc');
 
-        $query = $period->cashRecords()->with(['family', 'recordedBy', 'verifiedBy']);
+        $query = $period->cashRecords()->with(['family', 'residentBlock.resident', 'recordedBy', 'verifiedBy']);
 
         // Apply sorting
         if (in_array($sortBy, ['total_payment', 'payment_status', 'created_at'])) {

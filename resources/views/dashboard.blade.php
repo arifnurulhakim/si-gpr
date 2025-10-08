@@ -4,6 +4,8 @@
 
 @section('content')
 <div class="space-y-4 sm:space-y-6">
+    @if(auth()->user()->isAdmin())
+    <!-- Admin Dashboard - Full Content -->
     <!-- Statistics Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <div class="bg-white overflow-hidden shadow rounded-lg">
@@ -60,7 +62,6 @@
             </div>
         </div>
 
-        @if(auth()->user()->isAdmin())
         <div class="bg-white overflow-hidden shadow rounded-lg">
             <div class="p-4 sm:p-5">
                 <div class="flex items-center">
@@ -78,28 +79,8 @@
                 </div>
             </div>
         </div>
-        @else
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-4 sm:p-5">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
-                        </svg>
-                    </div>
-                    <div class="ml-3 sm:ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-xs sm:text-sm font-medium text-gray-500 truncate">Tagihan Pending</dt>
-                            <dd class="text-base sm:text-lg font-medium text-gray-900">{{ $userPendingBills ?? 0 }}</dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endif
     </div>
 
-    @if(auth()->user()->isAdmin())
     <!-- Water Usage Statistics -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <div class="bg-white overflow-hidden shadow rounded-lg">
@@ -174,7 +155,6 @@
             </div>
         </div>
     </div>
-    @endif
 
     <!-- Recent Families -->
     <div class="bg-white shadow rounded-lg">
@@ -235,7 +215,6 @@
         </div>
     </div>
 
-    @if(auth()->user()->isAdmin())
     <!-- Recent Water Records -->
     <div class="bg-white shadow rounded-lg">
         <div class="px-3 py-4 sm:px-4 sm:py-5 sm:p-6">
@@ -311,14 +290,12 @@
             </div>
         </div>
     </div>
-    @endif
 
     <!-- Quick Actions -->
     <div class="bg-white shadow rounded-lg">
         <div class="px-3 py-4 sm:px-4 sm:py-5 sm:p-6">
             <h3 class="text-base sm:text-lg leading-6 font-medium text-gray-900 mb-4">Aksi Cepat</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                @if(auth()->user()->isAdmin())
                 <a href="{{ route('families.create') }}" class="inline-flex items-center justify-center px-3 sm:px-4 py-2 sm:py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
                     <svg class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -340,24 +317,50 @@
                     <span class="hidden sm:inline">Tambah Periode Air</span>
                     <span class="sm:hidden">Tambah Periode</span>
                 </a>
-                @else
-                <a href="{{ route('my-family') }}" class="inline-flex items-center justify-center px-3 sm:px-4 py-2 sm:py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
-                    <svg class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                    </svg>
-                    <span class="hidden sm:inline">Data Keluarga Saya</span>
-                    <span class="sm:hidden">Data Keluarga</span>
-                </a>
-                <a href="{{ route('my-water-bills') }}" class="inline-flex items-center justify-center px-3 sm:px-4 py-2 sm:py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
-                    <svg class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
-                    </svg>
-                    <span class="hidden sm:inline">Tagihan Air Saya</span>
-                    <span class="sm:hidden">Tagihan Air</span>
-                </a>
-                @endif
             </div>
         </div>
     </div>
+    @else
+    <!-- User Dashboard - Only Water and Cash Bills Counts -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+        <!-- Water Bills Count -->
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-4 sm:p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 sm:h-6 sm:w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-3 sm:ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-xs sm:text-sm font-medium text-gray-500 truncate">Tagihan Air</dt>
+                            <dd class="text-base sm:text-lg font-medium text-gray-900">{{ $userWaterBillsCount }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cash Bills Count -->
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-4 sm:p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 sm:h-6 sm:w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-3 sm:ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-xs sm:text-sm font-medium text-gray-500 truncate">Tagihan Kas</dt>
+                            <dd class="text-base sm:text-lg font-medium text-gray-900">{{ $userCashBillsCount }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
 @endsection

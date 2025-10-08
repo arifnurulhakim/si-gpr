@@ -40,7 +40,7 @@ class WaterUsageController extends Controller
      */
     public function create(WaterPeriod $waterPeriod)
     {
-        $residentBlocks = \App\Models\ResidentBlock::with('family')->orderBy('block')->get();
+        $residentBlocks = \App\Models\ResidentBlock::with(['family', 'resident'])->orderBy('block')->get();
         return view('water-usage.create', compact('waterPeriod', 'residentBlocks'));
     }
 
@@ -94,7 +94,7 @@ class WaterUsageController extends Controller
      */
     public function edit(WaterPeriod $waterPeriod, WaterUsageRecord $waterUsageRecord)
     {
-        $residentBlocks = \App\Models\ResidentBlock::with('family')->orderBy('block')->get();
+        $residentBlocks = \App\Models\ResidentBlock::with(['family', 'resident'])->orderBy('block')->get();
         return view('water-usage.edit', compact('waterPeriod', 'waterUsageRecord', 'residentBlocks'));
     }
 

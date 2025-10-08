@@ -82,7 +82,7 @@
     <div class="bg-white shadow overflow-hidden sm:rounded-lg">
         <div class="px-3 py-4 sm:px-4 sm:py-5 sm:px-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-3 sm:space-y-0">
-                <h3 class="text-base sm:text-lg leading-6 font-medium text-gray-900">Data Kas Keluarga</h3>
+                <h3 class="text-base sm:text-lg leading-6 font-medium text-gray-900">Data Kas per KK/Blok</h3>
                 <div class="flex items-center space-x-3">
                     <label for="per_page" class="text-sm font-medium text-gray-700">Tampilkan:</label>
                     <div class="relative">
@@ -103,8 +103,18 @@
             <div class="border-t border-gray-200 p-4">
                 <div class="flex justify-between items-start">
                     <div class="flex-1">
-                        <p class="text-sm font-medium text-gray-900">{{ $record->family ? $record->family->head_of_family_name : 'Blok ' . $record->residentBlock->block }}</p>
-                        <p class="text-sm text-gray-600">{{ $record->family ? $record->family->family_card_number : 'N/A' }}</p>
+                        <div class="space-y-1">
+                            <div>
+                                <p class="text-xs font-medium text-gray-500">KK</p>
+                                <p class="text-sm font-medium text-gray-900">{{ $record->family ? $record->family->family_card_number : '-' }}</p>
+                                <p class="text-sm text-gray-600">{{ $record->family ? $record->family->head_of_family_name : '-' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs font-medium text-gray-500">Blok</p>
+                                <p class="text-sm font-medium text-gray-900">{{ $record->residentBlock ? $record->residentBlock->block : '-' }}</p>
+                                <p class="text-sm text-gray-600">{{ $record->residentBlock && $record->residentBlock->resident ? $record->residentBlock->resident->name : '-' }}</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="flex items-center space-x-2">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $record->payment_status === 'LUNAS' ? 'bg-green-100 text-green-800' : ($record->payment_status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' : ($record->payment_status === 'PAYMENT_UPLOADED' ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800')) }}">
@@ -137,7 +147,8 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keluarga</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">KK</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Blok</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uang Kas</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uang Ronda</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lain-lain</th>
@@ -150,10 +161,12 @@
                     @forelse($records as $record)
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div>
-                                <div class="text-sm font-medium text-gray-900">{{ $record->family ? $record->family->head_of_family_name : 'Blok ' . $record->residentBlock->block }}</div>
-                                <div class="text-sm text-gray-500">{{ $record->family ? $record->family->family_card_number : 'N/A' }}</div>
-                            </div>
+                            <div class="text-sm font-medium text-gray-900">{{ $record->family ? $record->family->family_card_number : '-' }}</div>
+                            <div class="text-sm text-gray-500">{{ $record->family ? $record->family->head_of_family_name : '-' }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ $record->residentBlock ? $record->residentBlock->block : '-' }}</div>
+                            <div class="text-sm text-gray-500">{{ $record->residentBlock && $record->residentBlock->resident ? $record->residentBlock->resident->name : '-' }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             Rp {{ number_format($record->cash_amount) }}
@@ -183,7 +196,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">Belum ada data kas</td>
+                        <td colspan="8" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">Belum ada data kas</td>
                     </tr>
                     @endforelse
                 </tbody>

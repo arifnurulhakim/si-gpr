@@ -40,7 +40,7 @@ class CashRecordController extends Controller
      */
     public function create(CashPeriod $cashPeriod)
     {
-        $residentBlocks = \App\Models\ResidentBlock::with('family')->orderBy('block')->get();
+        $residentBlocks = \App\Models\ResidentBlock::with(['family', 'resident'])->orderBy('block')->get();
         return view('cash-records.create', compact('cashPeriod', 'residentBlocks'));
     }
 
@@ -92,7 +92,7 @@ class CashRecordController extends Controller
      */
     public function edit(CashPeriod $cashPeriod, CashRecord $cashRecord)
     {
-        $residentBlocks = \App\Models\ResidentBlock::with('family')->orderBy('block')->get();
+        $residentBlocks = \App\Models\ResidentBlock::with(['family', 'resident'])->orderBy('block')->get();
         return view('cash-records.edit', compact('cashPeriod', 'cashRecord', 'residentBlocks'));
     }
 

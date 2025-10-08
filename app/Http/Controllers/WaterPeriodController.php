@@ -79,7 +79,7 @@ class WaterPeriodController extends Controller
         $period = WaterPeriod::findOrFail($id);
 
         // Get water usage records with pagination and sorting
-        $query = $period->waterUsageRecords()->with('family');
+        $query = $period->waterUsageRecords()->with(['family', 'residentBlock.resident']);
 
         // Apply sorting
         if (in_array($sortBy, ['usage_amount', 'bill_amount', 'total_payment', 'payment_status', 'created_at'])) {
