@@ -100,7 +100,7 @@
 
                         <!-- Resident Login Fields -->
                         <div id="residentLoginFields" class="hidden">
-                            <div class="mb-4">
+                            <div>
                                 <label for="block" class="block text-sm font-medium text-gray-700 mb-2">
                                     Blok Rumah
                                 </label>
@@ -114,26 +114,11 @@
                                     Masukkan nomor blok rumah Anda (contoh: D1-12)
                                 </p>
                             </div>
-                            <div>
-                                <label for="nik" class="block text-sm font-medium text-gray-700 mb-2">
-                                    NIK
-                                </label>
-                                <input id="nik" name="nik" type="text" autocomplete="off"
-                                       class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base @error('nik') border-red-500 @enderror"
-                                       placeholder="16 digit NIK"
-                                       maxlength="16">
-                                @error('nik')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                                <p class="mt-1 text-xs text-gray-500">
-                                    Masukkan NIK Anda (16 digit)
-                                </p>
-                            </div>
                         </div>
 
                         <div>
                             <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                                Password
+                                <span id="passwordLabel">Password</span>
                             </label>
                             <input id="password" name="password" type="password" autocomplete="current-password" required
                                    class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base @error('password') border-red-500 @enderror"
@@ -194,6 +179,8 @@
             const residentModeBtn = document.getElementById('residentModeBtn');
             const adminLoginFields = document.getElementById('adminLoginFields');
             const residentLoginFields = document.getElementById('residentLoginFields');
+            const passwordInput = document.getElementById('password');
+            const passwordLabel = document.getElementById('passwordLabel');
 
             if (mode === 'admin') {
                 // Show admin fields
@@ -206,10 +193,14 @@
                 residentModeBtn.classList.remove('bg-white', 'text-gray-900', 'shadow-sm');
                 residentModeBtn.classList.add('text-gray-700');
 
+                // Update password field
+                passwordLabel.textContent = 'Password';
+                passwordInput.placeholder = 'Masukkan password Anda';
+                passwordInput.maxLength = '';
+
                 // Set required attributes
                 document.getElementById('login').required = true;
                 document.getElementById('block').required = false;
-                document.getElementById('nik').required = false;
             } else {
                 // Show resident fields
                 adminLoginFields.classList.add('hidden');
@@ -221,10 +212,14 @@
                 adminModeBtn.classList.remove('bg-white', 'text-gray-900', 'shadow-sm');
                 adminModeBtn.classList.add('text-gray-700');
 
+                // Update password field for resident (NIK as password)
+                passwordLabel.textContent = 'Password (NIK)';
+                passwordInput.placeholder = '16 digit NIK';
+                passwordInput.maxLength = '16';
+
                 // Set required attributes
                 document.getElementById('login').required = false;
                 document.getElementById('block').required = true;
-                document.getElementById('nik').required = true;
             }
         }
     </script>

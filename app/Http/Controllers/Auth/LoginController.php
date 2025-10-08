@@ -41,12 +41,13 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        // Check if it's resident login (block + NIK)
-        if ($request->filled('block') && $request->filled('nik')) {
+        // Check if it's resident login (block only, password is NIK)
+        if ($request->filled('block') && !$request->filled('login')) {
             $request->validate([
                 'block' => 'required|string',
-                'nik' => 'required|string|size:16',
-                'password' => 'required|string',
+                'password' => 'required|string|size:16',
+            ], [
+                'password.size' => 'NIK harus 16 digit.',
             ]);
 
             return $this->attemptResidentLogin($request);
@@ -83,12 +84,16 @@ class LoginController extends Controller
 
     /**
      * Attempt to log the user into the application using block and NIK.
+     * For resident login, the password field contains the NIK.
      */
     protected function attemptResidentLogin(Request $request)
     {
-        $user = User::findByBlockAndNik($request->block, $request->nik);
+        // Password is the NIK for resident login
+        $nik = $request->password;
 
-        if ($user && Hash::check($request->password, $user->password)) {
+        $user = User::findByBlockAndNik($request->block, $nik);
+
+        if ($user && Hash::check($nik, $user->password)) {
             Auth::login($user, $request->filled('remember'));
 
             if ($request->hasSession()) {
