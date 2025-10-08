@@ -20,18 +20,18 @@
             <div class="border-t border-gray-200 px-3 py-4 sm:px-4 sm:py-5 sm:px-6">
                 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div>
-                        <label for="period_name" class="block text-sm font-medium text-gray-700">Nama Periode</label>
-                        <input type="text" name="period_name" id="period_name" value="{{ old('period_name') }}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('period_name') border-red-300 @enderror">
-                        @error('period_name')
+                        <label for="period_code" class="block text-sm font-medium text-gray-700">Kode Periode</label>
+                        <input type="text" name="period_code" id="period_code" value="{{ old('period_code') }}" placeholder="2025-08" maxlength="7" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('period_code') border-red-300 @enderror">
+                        <p class="mt-1 text-sm text-gray-500">Format: YYYY-MM (contoh: 2025-08)</p>
+                        @error('period_code')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label for="period_code" class="block text-sm font-medium text-gray-700">Kode Periode</label>
-                        <input type="text" name="period_code" id="period_code" value="{{ old('period_code') }}" placeholder="2025-08" maxlength="7" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('period_code') border-red-300 @enderror">
-                        <p class="mt-1 text-sm text-gray-500">Format: YYYY-MM (contoh: 2025-08)</p>
-                        @error('period_code')
+                        <label for="period_name" class="block text-sm font-medium text-gray-700">Nama Periode</label>
+                        <input type="text" name="period_name" id="period_name" value="{{ old('period_name') }}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500 sm:text-sm @error('period_name') border-red-300 @enderror" readonly>
+                        @error('period_name')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
@@ -46,7 +46,7 @@
 
                     <div>
                         <label for="admin_fee" class="block text-sm font-medium text-gray-700">Biaya Admin</label>
-                        <input type="number" name="admin_fee" id="admin_fee" value="{{ old('admin_fee', 0) }}" min="0" step="0.01" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('admin_fee') border-red-300 @enderror">
+                        <input type="number" name="admin_fee" id="admin_fee" value="{{ old('admin_fee') }}" min="0" step="0.01" placeholder="0" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('admin_fee') border-red-300 @enderror">
                         @error('admin_fee')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -100,13 +100,38 @@
 </div>
 
 <script>
-// Auto-format period code
+// Auto-format period code and generate period name
 document.getElementById('period_code').addEventListener('input', function(e) {
     let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
     if (value.length >= 4) {
         value = value.substring(0, 4) + '-' + value.substring(4, 6);
     }
     e.target.value = value;
+
+    // Auto-generate period name from period code
+    const periodCode = value;
+    const periodNameInput = document.getElementById('period_name');
+
+    // Check if format is YYYY-MM
+    const codeMatch = periodCode.match(/^(\d{4})-(\d{2})$/);
+
+    if (codeMatch) {
+        const year = codeMatch[1];
+        const month = codeMatch[2];
+
+        // Mapping for month numbers to Indonesian month names
+        const monthNames = {
+            '01': 'Januari', '02': 'Februari', '03': 'Maret', '04': 'April',
+            '05': 'Mei', '06': 'Juni', '07': 'Juli', '08': 'Agustus',
+            '09': 'September', '10': 'Oktober', '11': 'November', '12': 'Desember'
+        };
+
+        if (monthNames[month]) {
+            periodNameInput.value = `${monthNames[month]} ${year}`;
+        }
+    } else {
+        periodNameInput.value = '';
+    }
 });
 
 // Calculate total amount

@@ -16,19 +16,6 @@
             @csrf
 
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <!-- Nama Periode -->
-                <div>
-                    <label for="period_name" class="block text-sm font-medium text-gray-700">
-                        Nama Periode <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="period_name" id="period_name" value="{{ old('period_name') }}"
-                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('period_name') border-red-300 @enderror"
-                           placeholder="Agustus 2025" required>
-                    @error('period_name')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
                 <!-- Kode Periode -->
                 <div>
                     <label for="period_code" class="block text-sm font-medium text-gray-700">
@@ -41,6 +28,19 @@
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                     <p class="mt-1 text-sm text-gray-500">Format: YYYY-MM (contoh: 2025-08)</p>
+                </div>
+
+                <!-- Nama Periode -->
+                <div>
+                    <label for="period_name" class="block text-sm font-medium text-gray-700">
+                        Nama Periode <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="period_name" id="period_name" value="{{ old('period_name') }}"
+                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500 sm:text-sm @error('period_name') border-red-300 @enderror"
+                           placeholder="Agustus 2025" readonly required>
+                    @error('period_name')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Tanggal Jatuh Tempo -->
@@ -77,15 +77,15 @@
                 <!-- Biaya Administrasi -->
                 <div class="sm:col-span-2">
                     <label for="admin_fee" class="block text-sm font-medium text-gray-700">
-                        Biaya Administrasi <span class="text-red-500">*</span>
+                        Biaya Administrasi
                     </label>
                     <div class="mt-1 relative rounded-md shadow-sm">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <span class="text-gray-500 sm:text-sm">Rp</span>
                         </div>
-                        <input type="number" name="admin_fee" id="admin_fee" value="{{ old('admin_fee', 0) }}"
+                        <input type="number" name="admin_fee" id="admin_fee" value="{{ old('admin_fee') }}"
                                class="pl-10 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('admin_fee') border-red-300 @enderror"
-                               placeholder="0" step="0.01" min="0" required>
+                               placeholder="0" step="0.01" min="0">
                     </div>
                     @error('admin_fee')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -110,26 +110,30 @@
 </div>
 
 <script>
-// Auto-generate period code from period name
-document.getElementById('period_name').addEventListener('input', function() {
-    const periodName = this.value.toLowerCase();
-    const periodCodeInput = document.getElementById('period_code');
+// Auto-generate period name from period code
+document.getElementById('period_code').addEventListener('input', function() {
+    const periodCode = this.value;
+    const periodNameInput = document.getElementById('period_name');
 
-    // Simple mapping for common month names
-    const monthMap = {
-        'januari': '01', 'februari': '02', 'maret': '03', 'april': '04',
-        'mei': '05', 'juni': '06', 'juli': '07', 'agustus': '08',
-        'september': '09', 'oktober': '10', 'november': '11', 'desember': '12'
-    };
+    // Check if format is YYYY-MM
+    const codeMatch = periodCode.match(/^(\d{4})-(\d{2})$/);
 
-    // Extract year and month
-    const yearMatch = periodName.match(/(\d{4})/);
-    const monthMatch = Object.keys(monthMap).find(month => periodName.includes(month));
+    if (codeMatch) {
+        const year = codeMatch[1];
+        const month = codeMatch[2];
 
-    if (yearMatch && monthMatch) {
-        const year = yearMatch[1];
-        const month = monthMap[monthMatch];
-        periodCodeInput.value = `${year}-${month}`;
+        // Mapping for month numbers to Indonesian month names
+        const monthNames = {
+            '01': 'Januari', '02': 'Februari', '03': 'Maret', '04': 'April',
+            '05': 'Mei', '06': 'Juni', '07': 'Juli', '08': 'Agustus',
+            '09': 'September', '10': 'Oktober', '11': 'November', '12': 'Desember'
+        };
+
+        if (monthNames[month]) {
+            periodNameInput.value = `${monthNames[month]} ${year}`;
+        }
+    } else {
+        periodNameInput.value = '';
     }
 });
 </script>
