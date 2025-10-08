@@ -42,11 +42,16 @@ class WaterUsageController extends Controller
     {
         $residentBlocks = \App\Models\ResidentBlock::with(['family', 'resident'])->orderBy('block')->get();
 
-        // Get previous period for reference
-        $previousPeriod = WaterPeriod::where('status', 'ACTIVE')
-            ->where('id', '!=', $waterPeriod->id)
+        // Get previous period for reference (look for any period before current one)
+        $previousPeriod = WaterPeriod::where('id', '!=', $waterPeriod->id)
+            ->where('due_date', '<', $waterPeriod->due_date)
             ->orderBy('due_date', 'desc')
             ->first();
+
+        // Debug: Log if no previous period found
+        if (!$previousPeriod) {
+            \Illuminate\Support\Facades\Log::info('No previous period found for current period: ' . $waterPeriod->period_name);
+        }
 
         // Prepare meter photos data
         $meterPhotosData = [];
