@@ -26,12 +26,8 @@ class WaterMeterPhotoController extends Controller
                 ->with('error', 'Anda belum memiliki blok tempat tinggal.');
         }
 
-        // Get active water periods for this block
+        // Get active water periods
         $waterPeriods = WaterPeriod::where('status', 'ACTIVE')
-            ->where(function($query) use ($user) {
-                $query->where('block', $user->block)
-                    ->orWhereNull('block');
-            })
             ->orderBy('due_date', 'desc')
             ->get();
 
