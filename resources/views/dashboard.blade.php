@@ -361,6 +361,95 @@
             </div>
         </div>
     </div>
+
+    <!-- Payment Information -->
+    <div class="bg-white shadow rounded-lg">
+        <div class="px-3 py-4 sm:px-4 sm:py-5 sm:p-6">
+            <h3 class="text-base sm:text-lg leading-6 font-medium text-gray-900 mb-4">Informasi Pembayaran</h3>
+
+            <div class="space-y-4">
+                <!-- Cash & Ronda Payment -->
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h4 class="text-sm font-medium text-gray-900 mb-3">Pembayaran Uang Kas & Ronda</h4>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-gray-900">Mandiri</p>
+                                    <p class="text-sm text-gray-600">1310023122494</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-medium text-gray-900">Iman Aulia Rahman</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-gray-900">Dana</p>
+                                    <p class="text-sm text-gray-600">083827366669</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-medium text-gray-900">Iman Aulia Rahman</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Water Bill Payment -->
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h4 class="text-sm font-medium text-gray-900 mb-3">Pembayaran Tagihan Air</h4>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-gray-900">Mandiri</p>
+                                    <p class="text-sm text-gray-600">1070025111974</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-medium text-gray-900">Yudi Sambas Jupari</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-gray-900">Dana</p>
+                                    <p class="text-sm text-gray-600">082122001974</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-medium text-gray-900">Yudi Sambas Jupari</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     @endif
 </div>
 @endsection
