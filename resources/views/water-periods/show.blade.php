@@ -302,7 +302,9 @@ function updatePerPage(value) {
     window.location.href = url.toString();
 }
 
-function confirmRecordDelete(recordId, recordName) {
+function confirmRecordDelete(button) {
+    const recordId = button.getAttribute('data-record-id');
+    const recordName = button.getAttribute('data-record-name');
     document.getElementById('recordIdentifier').textContent = recordName;
     document.getElementById('deleteRecordForm').action = `/water-periods/{{ $period->id }}/records/${recordId}`;
     document.getElementById('deleteRecordModal').classList.remove('hidden');
