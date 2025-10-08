@@ -32,6 +32,11 @@ class WaterPeriod extends Model
         return $this->hasMany(WaterUsageRecord::class);
     }
 
+    public function waterMeterPhotos(): HasMany
+    {
+        return $this->hasMany(WaterMeterPhoto::class);
+    }
+
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\CashPeriod;
 use App\Models\CashRecord;
+use App\Exports\CashPeriodExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CashPeriodController extends Controller
 {
@@ -190,5 +192,16 @@ class CashPeriodController extends Controller
         $period->delete();
 
         return redirect()->route('cash-periods.index')->with('success', 'Periode kas dan semua data terkait berhasil dihapus permanen');
+    }
+
+    /**
+     * Export cash period data to Excel
+     */
+    public function export(string $id)
+    {
+        $period = CashPeriod::findOrFail($id);
+        $filename = 'data-periode-kas-' . $period->period_code . '-' . date('Y-m-d') . '.xlsx';
+
+        return Excel::download(new CashPeriodExport($period), $filename);
     }
 }

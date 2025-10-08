@@ -41,7 +41,56 @@ class WaterUsageController extends Controller
     public function create(WaterPeriod $waterPeriod)
     {
         $residentBlocks = \App\Models\ResidentBlock::with(['family', 'resident'])->orderBy('block')->get();
-        return view('water-usage.create', compact('waterPeriod', 'residentBlocks'));
+
+        // Get previous period for reference
+        $previousPeriod = WaterPeriod::where('status', 'ACTIVE')
+            ->where('id', '!=', $waterPeriod->id)
+            ->orderBy('due_date', 'desc')
+            ->first();
+
+        // Prepare meter photos data
+        $meterPhotosData = [];
+        foreach ($residentBlocks as $block) {
+            $blockPhotos = [
+                'current_period' => null,
+                'previous_period' => null
+            ];
+
+            // Get current period photo
+            $currentPhoto = $block->waterMeterPhotos()
+                ->where('water_period_id', $waterPeriod->id)
+                ->with('uploadedBy')
+                ->first();
+
+            if ($currentPhoto) {
+                $blockPhotos['current_period'] = [
+                    'photo_url' => $currentPhoto->photo_url,
+                    'created_at' => $currentPhoto->created_at->format('d M Y H:i'),
+                    'uploaded_by' => $currentPhoto->uploadedBy->name ?? 'Unknown'
+                ];
+            }
+
+            // Get previous period photo
+            if ($previousPeriod) {
+                $previousPhoto = $block->waterMeterPhotos()
+                    ->where('water_period_id', $previousPeriod->id)
+                    ->with('uploadedBy')
+                    ->first();
+
+                if ($previousPhoto) {
+                    $blockPhotos['previous_period'] = [
+                        'photo_url' => $previousPhoto->photo_url,
+                        'period_name' => $previousPeriod->period_name,
+                        'created_at' => $previousPhoto->created_at->format('d M Y H:i'),
+                        'uploaded_by' => $previousPhoto->uploadedBy->name ?? 'Unknown'
+                    ];
+                }
+            }
+
+            $meterPhotosData[$block->id] = $blockPhotos;
+        }
+
+        return view('water-usage.create', compact('waterPeriod', 'residentBlocks', 'meterPhotosData'));
     }
 
     /**

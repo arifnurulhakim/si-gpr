@@ -29,7 +29,6 @@
             </div>
         </div>
     </div>
-
     <div class="bg-white shadow overflow-hidden sm:rounded-lg">
         <form method="POST" action="{{ route('water-usage.update', [$waterPeriod->id, $waterUsageRecord->id]) }}" class="space-y-6 p-6">
             @csrf
@@ -147,8 +146,8 @@
 </div>
 
 <script>
-const pricePerM3 = {{ $waterPeriod->price_per_m3 }};
-const adminFee = {{ $waterPeriod->admin_fee }};
+const pricePerM3 = '{{ $waterPeriod->price_per_m3 }}';
+const adminFee = '{{ $waterPeriod->admin_fee }}';
 
 function calculateAmounts() {
     const initialReading = parseFloat(document.getElementById('initial_meter_reading').value) || 0;

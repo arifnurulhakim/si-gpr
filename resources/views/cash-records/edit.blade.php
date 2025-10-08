@@ -108,7 +108,7 @@ function calculateTotal() {
     const cashAmount = parseFloat(document.getElementById('cash_amount').value) || 0;
     const patrolAmount = parseFloat(document.getElementById('patrol_amount').value) || 0;
     const otherAmount = parseFloat(document.getElementById('other_amount').value) || 0;
-    const adminFee = {{ $cashPeriod->admin_fee }};
+    const adminFee = '{{ $cashPeriod->admin_fee }}';
 
     const total = cashAmount + patrolAmount + otherAmount + adminFee;
 

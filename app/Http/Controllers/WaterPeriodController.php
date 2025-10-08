@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\WaterPeriod;
 use App\Models\WaterUsageRecord;
+use App\Exports\WaterPeriodExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class WaterPeriodController extends Controller
 {
@@ -163,7 +166,7 @@ class WaterPeriodController extends Controller
         foreach ($period->waterUsageRecords as $record) {
             // Delete payment proof file if exists
             if ($record->payment_proof_path) {
-                \Storage::disk('public')->delete($record->payment_proof_path);
+                Storage::disk('public')->delete($record->payment_proof_path);
             }
             $record->delete();
         }
@@ -172,5 +175,16 @@ class WaterPeriodController extends Controller
         $period->delete();
 
         return redirect()->route('water-periods.index')->with('success', 'Periode air dan semua data terkait berhasil dihapus permanen');
+    }
+
+    /**
+     * Export water period data to Excel
+     */
+    public function export(string $id)
+    {
+        $period = WaterPeriod::findOrFail($id);
+        $filename = 'data-periode-air-' . $period->period_code . '-' . date('Y-m-d') . '.xlsx';
+
+        return Excel::download(new WaterPeriodExport($period), $filename);
     }
 }

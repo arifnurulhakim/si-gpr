@@ -9,6 +9,7 @@ use App\Http\Controllers\ResidentBlockController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\WaterPeriodController;
 use App\Http\Controllers\WaterUsageController;
+use App\Http\Controllers\WaterMeterPhotoController;
 use App\Http\Controllers\CashPeriodController;
 use App\Http\Controllers\CashRecordController;
 
@@ -36,6 +37,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('water-periods', WaterPeriodController::class);
         Route::post('water-periods/{waterPeriod}/close', [WaterPeriodController::class, 'close'])->name('water-periods.close');
         Route::delete('water-periods/{waterPeriod}/force-delete', [WaterPeriodController::class, 'forceDelete'])->name('water-periods.force-delete');
+        Route::get('water-periods/{waterPeriod}/export', [WaterPeriodController::class, 'export'])->name('water-periods.export');
 
         // Water Usage Records (nested under water periods)
         Route::get('water-periods/{waterPeriod}/records/create', [WaterUsageController::class, 'create'])->name('water-usage.create');
@@ -56,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('cash-periods', CashPeriodController::class);
         Route::post('cash-periods/{cashPeriod}/close', [CashPeriodController::class, 'close'])->name('cash-periods.close');
         Route::delete('cash-periods/{cashPeriod}/force-delete', [CashPeriodController::class, 'forceDelete'])->name('cash-periods.force-delete');
+        Route::get('cash-periods/{cashPeriod}/export', [CashPeriodController::class, 'export'])->name('cash-periods.export');
 
         // Cash Records (nested under cash periods)
         Route::get('cash-periods/{cashPeriod}/records/create', [CashRecordController::class, 'create'])->name('cash-records.create');
@@ -82,6 +85,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/my-water-periods/{waterPeriod}/records/{waterUsageRecord}', [WaterUsageController::class, 'show'])->name('my-water-usage.show');
         Route::post('/my-water-periods/{waterPeriod}/records/{waterUsageRecord}/upload-proof', [WaterUsageController::class, 'uploadPaymentProof'])->name('my-water-usage.upload-proof');
         Route::get('/my-water-periods/{waterPeriod}/records/{waterUsageRecord}/print', [WaterUsageController::class, 'printReceipt'])->name('my-water-usage.print');
+
+        // Water meter photos for users
+        Route::get('/water-meter-photos', [WaterMeterPhotoController::class, 'index'])->name('water-meter-photos.index');
+        Route::post('/water-meter-photos', [WaterMeterPhotoController::class, 'store'])->name('water-meter-photos.store');
+        Route::get('/water-meter-photos/{waterMeterPhoto}', [WaterMeterPhotoController::class, 'show'])->name('water-meter-photos.show');
+        Route::put('/water-meter-photos/{waterMeterPhoto}', [WaterMeterPhotoController::class, 'update'])->name('water-meter-photos.update');
+        Route::delete('/water-meter-photos/{waterMeterPhoto}', [WaterMeterPhotoController::class, 'destroy'])->name('water-meter-photos.destroy');
 
         // Cash usage for users
         Route::get('/my-cash-bills', [CashRecordController::class, 'myCashBills'])->name('my-cash-bills');

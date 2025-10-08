@@ -230,6 +230,113 @@
         </div>
     </div>
 
+    <!-- Foto Meteran Air -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-3 py-4 sm:px-4 sm:py-5 sm:px-6">
+            <h3 class="text-base sm:text-lg leading-6 font-medium text-gray-900">Foto Meteran Air</h3>
+        </div>
+        <div class="border-t border-gray-200">
+            @if($waterUsageRecord->residentBlock)
+                @php
+                    $currentPeriodPhoto = $waterUsageRecord->residentBlock->waterMeterPhotos()
+                        ->where('water_period_id', $waterPeriod->id)
+                        ->first();
+
+                    $previousPeriod = \App\Models\WaterPeriod::where('status', 'ACTIVE')
+                        ->where('id', '!=', $waterPeriod->id)
+                        ->orderBy('due_date', 'desc')
+                        ->first();
+
+                    $previousPeriodPhoto = null;
+                    if($previousPeriod) {
+                        $previousPeriodPhoto = $waterUsageRecord->residentBlock->waterMeterPhotos()
+                            ->where('water_period_id', $previousPeriod->id)
+                            ->first();
+                    }
+                @endphp
+
+                <div class="p-4 space-y-4">
+                    <!-- Foto Periode Saat Ini -->
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">Periode Saat Ini: {{ $waterPeriod->period_name }}</h4>
+                        @if($currentPeriodPhoto)
+                            <div class="relative">
+                                <img src="{{ $currentPeriodPhoto->photo_url }}"
+                                     alt="Foto Meteran Periode {{ $waterPeriod->period_name }}"
+                                     class="w-full max-w-md h-auto rounded-lg shadow-sm cursor-pointer border"
+                                     onclick="openImageModal(this.src)">
+                                <div class="absolute top-2 right-2">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <svg class="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        Tersedia
+                                    </span>
+                                </div>
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Diupload: {{ $currentPeriodPhoto->created_at->format('d M Y H:i') }}
+                                    @if($currentPeriodPhoto->uploadedBy)
+                                        oleh {{ $currentPeriodPhoto->uploadedBy->name }}
+                                    @endif
+                                </p>
+                            </div>
+                        @else
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <p class="mt-2 text-sm text-gray-500">Foto meteran belum diupload</p>
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- Foto Periode Sebelumnya -->
+                    @if($previousPeriod)
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">Periode Sebelumnya: {{ $previousPeriod->period_name }}</h4>
+                        @if($previousPeriodPhoto)
+                            <div class="relative">
+                                <img src="{{ $previousPeriodPhoto->photo_url }}"
+                                     alt="Foto Meteran Periode {{ $previousPeriod->period_name }}"
+                                     class="w-full max-w-md h-auto rounded-lg shadow-sm cursor-pointer border opacity-75"
+                                     onclick="openImageModal(this.src)">
+                                <div class="absolute top-2 right-2">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        <svg class="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        Referensi
+                                    </span>
+                                </div>
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Diupload: {{ $previousPeriodPhoto->created_at->format('d M Y H:i') }}
+                                    @if($previousPeriodPhoto->uploadedBy)
+                                        oleh {{ $previousPeriodPhoto->uploadedBy->name }}
+                                    @endif
+                                </p>
+                            </div>
+                        @else
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center bg-gray-50">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <p class="mt-2 text-sm text-gray-500">Foto meteran periode sebelumnya tidak tersedia</p>
+                            </div>
+                        @endif
+                    </div>
+                    @endif
+                </div>
+            @else
+                <div class="p-4 text-center text-gray-500">
+                    <svg class="mx-auto h-12 w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="text-sm">Record ini tidak memiliki blok tempat tinggal</p>
+                </div>
+            @endif
+        </div>
+    </div>
+
     <!-- Info Tambahan -->
     <div class="bg-white shadow overflow-hidden sm:rounded-lg">
         <div class="px-3 py-4 sm:px-4 sm:py-5 sm:px-6">

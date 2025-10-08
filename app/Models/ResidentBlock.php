@@ -76,4 +76,12 @@ class ResidentBlock extends Model
     {
         return $this->hasMany(CashRecord::class, 'block_id');
     }
+
+    /**
+     * Get water meter photos for this block
+     */
+    public function waterMeterPhotos(): HasMany
+    {
+        return $this->hasMany(WaterMeterPhoto::class, 'block_id');
+    }
 }
