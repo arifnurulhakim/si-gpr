@@ -114,31 +114,37 @@
             <!-- Foto Meteran Air Referensi -->
             <div id="meter-photos-section" class="bg-blue-50 border border-blue-200 rounded-md p-4 hidden">
                 <h3 class="text-sm font-medium text-blue-900 mb-3">Foto Meteran Air Referensi</h3>
-                <div id="current-period-photo" class="mb-4">
-                    <h4 class="text-xs font-medium text-blue-800 mb-2">Periode Saat Ini: {{ $waterPeriod->period_name }}</h4>
-                    <div id="current-photo-placeholder" class="border-2 border-dashed border-blue-300 rounded-lg p-4 text-center bg-white">
-                        <svg class="mx-auto h-8 w-8 text-blue-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <p class="text-xs text-blue-600">Pilih blok untuk melihat foto meteran</p>
-                    </div>
-                    <div id="current-photo-content" class="hidden">
-                        <img id="current-photo-img" src="" alt="Foto Meteran Periode Saat Ini" class="w-full max-w-sm h-auto rounded-lg shadow-sm cursor-pointer border" onclick="openImageModal(this.src)">
-                        <p id="current-photo-info" class="mt-1 text-xs text-blue-700"></p>
-                    </div>
-                </div>
 
-                <div id="previous-period-photo" class="hidden">
-                    <h4 class="text-xs font-medium text-blue-800 mb-2">Periode Sebelumnya</h4>
-                    <div id="previous-photo-placeholder" class="border-2 border-dashed border-blue-300 rounded-lg p-4 text-center bg-white">
-                        <svg class="mx-auto h-8 w-8 text-blue-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <p class="text-xs text-blue-600">Tidak ada periode sebelumnya</p>
+                <!-- Grid layout for side-by-side photos -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Previous Period Photo -->
+                    <div id="previous-period-photo" class="space-y-2 hidden">
+                        <h4 class="text-xs font-medium text-blue-800 mb-2">Periode Sebelumnya</h4>
+                        <div id="previous-photo-placeholder" class="border-2 border-dashed border-blue-300 rounded-lg p-4 text-center bg-white">
+                            <svg class="mx-auto h-8 w-8 text-blue-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <p class="text-xs text-blue-600">Tidak ada periode sebelumnya</p>
+                        </div>
+                        <div id="previous-photo-content" class="hidden">
+                            <img id="previous-photo-img" src="" alt="Foto Meteran Periode Sebelumnya" class="w-full h-auto rounded-lg shadow-sm cursor-pointer border opacity-75" onclick="openImageModal(this.src)">
+                            <p id="previous-photo-info" class="mt-1 text-xs text-blue-700"></p>
+                        </div>
                     </div>
-                    <div id="previous-photo-content" class="hidden">
-                        <img id="previous-photo-img" src="" alt="Foto Meteran Periode Sebelumnya" class="w-full max-w-sm h-auto rounded-lg shadow-sm cursor-pointer border opacity-75" onclick="openImageModal(this.src)">
-                        <p id="previous-photo-info" class="mt-1 text-xs text-blue-700"></p>
+
+                    <!-- Current Period Photo -->
+                    <div id="current-period-photo" class="space-y-2">
+                        <h4 class="text-xs font-medium text-blue-800 mb-2">Periode Saat Ini: {{ $waterPeriod->period_name }}</h4>
+                        <div id="current-photo-placeholder" class="border-2 border-dashed border-blue-300 rounded-lg p-4 text-center bg-white">
+                            <svg class="mx-auto h-8 w-8 text-blue-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <p class="text-xs text-blue-600">Pilih blok untuk melihat foto meteran</p>
+                        </div>
+                        <div id="current-photo-content" class="hidden">
+                            <img id="current-photo-img" src="" alt="Foto Meteran Periode Saat Ini" class="w-full h-auto rounded-lg shadow-sm cursor-pointer border" onclick="openImageModal(this.src)">
+                            <p id="current-photo-info" class="mt-1 text-xs text-blue-700"></p>
+                        </div>
                     </div>
                 </div>
 
@@ -248,10 +254,12 @@ function loadMeterPhotos() {
     console.log('Block photos data:', blockPhotos);
 
     if (!blockPhotos) {
-        // No photos available
+        // No photos available - show placeholders in side-by-side layout
         document.getElementById('current-photo-placeholder').classList.remove('hidden');
         document.getElementById('current-photo-content').classList.add('hidden');
-        document.getElementById('previous-period-photo').classList.add('hidden');
+        document.getElementById('previous-period-photo').classList.remove('hidden');
+        document.getElementById('previous-photo-placeholder').classList.remove('hidden');
+        document.getElementById('previous-photo-content').classList.add('hidden');
         return;
     }
 
@@ -269,7 +277,9 @@ function loadMeterPhotos() {
         document.getElementById('current-photo-content').classList.add('hidden');
     }
 
-    // Load previous period photo
+    // Load previous period photo - always show the section in side-by-side layout
+    document.getElementById('previous-period-photo').classList.remove('hidden');
+
     if (blockPhotos.previous_period && blockPhotos.previous_period.photo_url) {
         console.log('Loading previous period photo:', blockPhotos.previous_period.photo_url);
         document.getElementById('previous-photo-img').src = blockPhotos.previous_period.photo_url;
@@ -277,12 +287,10 @@ function loadMeterPhotos() {
             `Periode: ${blockPhotos.previous_period.period_name} - Diupload: ${blockPhotos.previous_period.created_at}`;
         document.getElementById('previous-photo-placeholder').classList.add('hidden');
         document.getElementById('previous-photo-content').classList.remove('hidden');
-        document.getElementById('previous-period-photo').classList.remove('hidden');
     } else {
         console.log('No previous period photo available');
         document.getElementById('previous-photo-placeholder').classList.remove('hidden');
         document.getElementById('previous-photo-content').classList.add('hidden');
-        document.getElementById('previous-period-photo').classList.remove('hidden');
     }
 }
 
