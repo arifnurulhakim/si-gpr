@@ -31,9 +31,9 @@
     </div>
 
     <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+
         <form method="POST" action="{{ route('water-usage.store', $waterPeriod->id) }}"
-              class="space-y-6 p-6"
-              data-meter-photos="{{ json_encode($meterPhotosData ?? []) }}">
+              class="space-y-6 p-6">
             @csrf
 
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -193,6 +193,10 @@ const pricePerM3 = '{{ $waterPeriod->price_per_m3 }}';
 const adminFee = '{{ $waterPeriod->admin_fee }}';
 const currentPeriodName = '{{ $waterPeriod->period_name }}';
 
+// Pass meter photos data from PHP to JavaScript
+const meterPhotosData = JSON.parse('{!! json_encode($meterPhotosData ?? []) !!}');
+console.log('Meter photos data from PHP:', meterPhotosData);
+
 function calculateAmounts() {
     const initialReading = parseFloat(document.getElementById('initial_meter_reading').value) || 0;
     const finalReading = parseFloat(document.getElementById('final_meter_reading').value) || 0;
@@ -214,13 +218,22 @@ document.getElementById('block_id').addEventListener('change', loadMeterPhotos);
 // Initial calculation
 calculateAmounts();
 
-// Get meter photos data from form data attribute
-const form = document.querySelector('form');
-const meterPhotosData = JSON.parse(form.getAttribute('data-meter-photos') || '{}');
+// Auto-load photos when page loads if a block is already selected
+document.addEventListener('DOMContentLoaded', function() {
+    // Make meterPhotosData available globally
+    window.meterPhotosData = meterPhotosData;
+
+    const selectedBlockId = document.getElementById('block_id').value;
+    if (selectedBlockId) {
+        loadMeterPhotos();
+    }
+});
 
 function loadMeterPhotos() {
     const blockId = document.getElementById('block_id').value;
     const photosSection = document.getElementById('meter-photos-section');
+
+    console.log('Loading meter photos for block ID:', blockId);
 
     if (!blockId) {
         photosSection.classList.add('hidden');
@@ -231,7 +244,8 @@ function loadMeterPhotos() {
     photosSection.classList.remove('hidden');
 
     // Find photos for selected block
-    const blockPhotos = meterPhotosData[blockId];
+    const blockPhotos = window.meterPhotosData[blockId];
+    console.log('Block photos data:', blockPhotos);
 
     if (!blockPhotos) {
         // No photos available
@@ -242,13 +256,15 @@ function loadMeterPhotos() {
     }
 
     // Load current period photo
-    if (blockPhotos.current_period) {
+    if (blockPhotos.current_period && blockPhotos.current_period.photo_url) {
+        console.log('Loading current period photo:', blockPhotos.current_period.photo_url);
         document.getElementById('current-photo-img').src = blockPhotos.current_period.photo_url;
         document.getElementById('current-photo-info').textContent =
             `Diupload: ${blockPhotos.current_period.created_at} oleh ${blockPhotos.current_period.uploaded_by || 'Unknown'}`;
         document.getElementById('current-photo-placeholder').classList.add('hidden');
         document.getElementById('current-photo-content').classList.remove('hidden');
     } else {
+        console.log('No current period photo available');
         document.getElementById('current-photo-placeholder').classList.remove('hidden');
         document.getElementById('current-photo-content').classList.add('hidden');
     }
