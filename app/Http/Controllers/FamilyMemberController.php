@@ -62,13 +62,13 @@ class FamilyMemberController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'family_id' => 'required|exists:families,id',
+            'family_id' => 'nullable|exists:families,id',
             'nik' => 'required|unique:family_members|max:16',
             'name' => 'required|string|max:255',
             'gender' => 'required|in:L,P',
             'date_of_birth' => 'required|date',
             'marital_status' => 'required|in:BELUM KAWIN,KAWIN,CERAI HIDUP,CERAI MATI',
-            'relationship_to_head' => 'required|in:KEPALA KELUARGA,SUAMI,ISTRI,ANAK,ORANGTUA,FAMILI LAIN,PEMBANTU,LAINNYA',
+            'relationship_to_head' => 'nullable|in:KEPALA KELUARGA,SUAMI,ISTRI,ANAK,ORANGTUA,FAMILI LAIN,PEMBANTU,LAINNYA',
             'citizenship' => 'required|string|max:3',
             'status' => 'required|in:tetap,domisili',
             'ktp_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
@@ -84,9 +84,13 @@ class FamilyMemberController extends Controller
             $data['ktp_image'] = 'ktp-images/' . $imageName;
         }
 
-        FamilyMember::create($data);
+        $familyMember = FamilyMember::create($data);
 
-        return redirect()->route('families.show', $request->family_id)->with('success', 'Anggota keluarga berhasil ditambahkan');
+        if ($request->family_id) {
+            return redirect()->route('families.show', $request->family_id)->with('success', 'Anggota keluarga berhasil ditambahkan');
+        } else {
+            return redirect()->route('family-members.index')->with('success', 'Warga independen berhasil ditambahkan');
+        }
     }
 
     /**
@@ -116,13 +120,13 @@ class FamilyMemberController extends Controller
         $familyMember = FamilyMember::findOrFail($id);
 
         $request->validate([
-            'family_id' => 'required|exists:families,id',
+            'family_id' => 'nullable|exists:families,id',
             'nik' => 'required|max:16|unique:family_members,nik,' . $id,
             'name' => 'required|string|max:255',
             'gender' => 'required|in:L,P',
             'date_of_birth' => 'required|date',
             'marital_status' => 'required|in:BELUM KAWIN,KAWIN,CERAI HIDUP,CERAI MATI',
-            'relationship_to_head' => 'required|in:KEPALA KELUARGA,SUAMI,ISTRI,ANAK,ORANGTUA,FAMILI LAIN,PEMBANTU,LAINNYA',
+            'relationship_to_head' => 'nullable|in:KEPALA KELUARGA,SUAMI,ISTRI,ANAK,ORANGTUA,FAMILI LAIN,PEMBANTU,LAINNYA',
             'citizenship' => 'required|string|max:3',
             'status' => 'required|in:tetap,domisili',
             'ktp_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
@@ -145,7 +149,11 @@ class FamilyMemberController extends Controller
 
         $familyMember->update($data);
 
-        return redirect()->route('families.show', $familyMember->family_id)->with('success', 'Anggota keluarga berhasil diperbarui');
+        if ($familyMember->family_id) {
+            return redirect()->route('families.show', $familyMember->family_id)->with('success', 'Anggota keluarga berhasil diperbarui');
+        } else {
+            return redirect()->route('family-members.index')->with('success', 'Warga independen berhasil diperbarui');
+        }
     }
 
     /**
