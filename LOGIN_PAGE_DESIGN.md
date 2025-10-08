@@ -1,4 +1,4 @@
-# Login Page Design - E-Kartu Keluarga
+# Login Page Design - SI-GPR
 
 ## Deskripsi
 
@@ -46,7 +46,7 @@ bg-gradient-to-br from-indigo-600 to-indigo-800
 
 #### **Branding Content**
 - **Logo Icon**: SVG icon keluarga (24x24)
-- **Title**: "E-Kartu Keluarga" (text-4xl font-bold)
+- **Title**: "SI-GPR" (text-4xl font-bold)
 - **Subtitle**: "Sistem Manajemen Kartu Keluarga Digital"
 - **Feature List**: 3 fitur utama dengan checkmark icons
 

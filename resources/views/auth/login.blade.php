@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login - E-Kartu Keluarga</title>
+    <title>Login - SI-GPR</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50">
@@ -19,8 +19,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
                     </div>
-                    <h1 class="text-4xl font-bold mb-4">E-Kartu Keluarga</h1>
-                    <p class="text-xl text-indigo-100 mb-8">Sistem Manajemen Kartu Keluarga Digital</p>
+                    <h1 class="text-4xl font-bold mb-4">SI-GPR</h1>
+                    <p class="text-xl text-indigo-100 mb-8">Sistem Informasi Griya Pasopati Regency</p>
                     <div class="space-y-4 text-indigo-100">
                         <div class="flex items-center justify-center">
                             <svg class="h-6 w-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -177,7 +177,7 @@
                 <!-- Footer -->
                 <div class="text-center">
                     <p class="text-sm text-gray-500">
-                        © 2024 E-Kartu Keluarga. All rights reserved.
+                        © 2024 SI-GPR. All rights reserved.
                     </p>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-# Deployment Guide - E-Kartu Keluarga
+# Deployment Guide - SI-GPR
 
 ## 🚀 Persiapan Upload ke Hosting (Tanpa Terminal)
 
@@ -41,7 +41,7 @@ public/build/               # ✅ Upload semua
 
 ### **1. Buat file .env di root folder**
 ```env
-APP_NAME="E-Kartu Keluarga"
+APP_NAME="SI-GPR"
 APP_ENV=production
 APP_KEY=base64:YOUR_GENERATED_KEY_HERE
 APP_DEBUG=false

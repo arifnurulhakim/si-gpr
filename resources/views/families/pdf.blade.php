@@ -218,7 +218,7 @@
     <!-- Footer -->
     <div class="footer">
         <p>Dokumen ini dicetak pada: {{ date('d/m/Y H:i:s') }}</p>
-        <p>E-Kartu Keluarga System</p>
+        <p>SI-GPR - Sistem Informasi Griya Pasopati Regency</p>
     </div>
 </body>
 </html>

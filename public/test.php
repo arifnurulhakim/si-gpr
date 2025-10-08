@@ -1,5 +1,5 @@
 <?php
-echo "<h1>E-Kartu Keluarga - Hosting Test</h1>";
+echo "<h1>SI-GPR - Hosting Test</h1>";
 
 // Basic PHP Test
 echo "<h2>1. PHP Information</h2>";

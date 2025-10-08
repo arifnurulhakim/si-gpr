@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Periode Air - E-Kartu Keluarga')
+@section('title', 'Detail Periode Air - SI-GPR')
 
 @section('content')
 <div class="space-y-4 sm:space-y-6">

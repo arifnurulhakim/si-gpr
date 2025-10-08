@@ -1,4 +1,4 @@
-# Tailwind CSS Setup untuk E-Kartu Keluarga
+# Tailwind CSS Setup untuk SI-GPR
 
 ## Solusi Styling
 
@@ -9,7 +9,7 @@ Karena ada masalah dengan PostCSS dan Tailwind CSS build process, kami menggunak
 ### 1. Layout File (`resources/views/layouts/app.blade.php`)
 ```html
 <head>
-    <title>@yield('title', 'E-Kartu Keluarga')</title>
+    <title>@yield('title', 'SI-GPR')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     @vite(['resources/js/app.js'])
 </head>

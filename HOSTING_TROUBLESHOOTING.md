@@ -1,4 +1,4 @@
-# Hosting Troubleshooting Guide - E-Kartu Keluarga
+# Hosting Troubleshooting Guide - SI-GPR
 
 ## 🔍 Error 503 Service Unavailable
 
@@ -44,7 +44,7 @@ public_html/
 
 ### **Step 3: Check .env Configuration**
 ```env
-APP_NAME="E-Kartu Keluarga"
+APP_NAME="SI-GPR"
 APP_ENV=production
 APP_KEY=base64:YOUR_KEY_HERE
 APP_DEBUG=false

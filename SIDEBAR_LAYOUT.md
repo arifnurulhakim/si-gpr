@@ -1,4 +1,4 @@
-# Sidebar Layout - E-Kartu Keluarga
+# Sidebar Layout - SI-GPR
 
 ## Deskripsi
 
@@ -20,7 +20,7 @@ Layout baru dengan sidebar di samping kiri seperti Filament Admin Panel, memberi
 #### 1. Logo Section
 ```html
 <div class="flex items-center justify-center h-16 bg-indigo-600">
-    <h1 class="text-xl font-bold text-white">E-Kartu Keluarga</h1>
+    <h1 class="text-xl font-bold text-white">SI-GPR</h1>
 </div>
 ```
 

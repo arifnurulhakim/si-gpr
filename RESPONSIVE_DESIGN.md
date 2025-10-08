@@ -1,7 +1,7 @@
 # Responsive Design Implementation
 
 ## Overview
-Aplikasi E-Kartu Keluarga telah diimplementasikan dengan responsive design yang memastikan pengalaman pengguna yang optimal di berbagai ukuran layar.
+Aplikasi SI-GPR telah diimplementasikan dengan responsive design yang memastikan pengalaman pengguna yang optimal di berbagai ukuran layar.
 
 ## Fitur Responsive yang Diimplementasikan
 
@@ -149,7 +149,7 @@ items-start sm:items-center     /* Alignment yang responsive */
 
 ## Kesimpulan
 
-Aplikasi E-Kartu Keluarga sekarang fully responsive dengan:
+Aplikasi SI-GPR sekarang fully responsive dengan:
 - ✅ Mobile-first design
 - ✅ Responsive navigation
 - ✅ Adaptive layouts

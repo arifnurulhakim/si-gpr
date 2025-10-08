@@ -1,8 +1,8 @@
-# Form Placeholders - E-Kartu Keluarga
+# Form Placeholders - SI-GPR
 
 ## Deskripsi
 
-Dokumentasi ini menjelaskan placeholder yang telah ditambahkan ke semua form input di aplikasi E-Kartu Keluarga untuk memberikan panduan dan contoh kepada pengguna.
+Dokumentasi ini menjelaskan placeholder yang telah ditambahkan ke semua form input di aplikasi SI-GPR untuk memberikan panduan dan contoh kepada pengguna.
 
 ## 📝 Form Kartu Keluarga
 

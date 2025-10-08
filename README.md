@@ -1,4 +1,4 @@
-# E-Kartu Keluarga (EKK)
+# SI-GPR - Sistem Informasi Griya Pasopati Regency
 
 Sistem manajemen kartu keluarga berbasis web yang dibangun dengan Laravel dan Tailwind CSS.
 
