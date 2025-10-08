@@ -47,8 +47,20 @@
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">Rp {{ number_format($period->price_per_m3) }}</dd>
                 </div>
                 <div class="bg-gray-50 px-3 py-4 sm:px-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt class="text-sm font-medium text-gray-500">Biaya Administrasi</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">Rp {{ number_format($period->admin_fee) }}</dd>
+                    <dt class="text-sm font-medium text-gray-500">Total Air Lunas</dt>
+                    <dd class="mt-1 text-sm font-medium text-green-600 sm:mt-0 sm:col-span-2">Rp {{ number_format($records->where('payment_status', 'LUNAS')->sum('total_payment')) }}</dd>
+                </div>
+                <div class="bg-gray-50 px-3 py-4 sm:px-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Total Air Belum Lunas</dt>
+                    <dd class="mt-1 text-sm font-medium text-red-600 sm:mt-0 sm:col-span-2">Rp {{ number_format($records->where('payment_status', '!=', 'LUNAS')->sum('total_payment')) }}</dd>
+                </div>
+                <div class="bg-white px-3 py-4 sm:px-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Blok Lunas</dt>
+                    <dd class="mt-1 text-sm font-medium text-green-600 sm:mt-0 sm:col-span-2">{{ $records->where('payment_status', 'LUNAS')->count() }} blok</dd>
+                </div>
+                <div class="bg-gray-50 px-3 py-4 sm:px-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Blok Belum Lunas</dt>
+                    <dd class="mt-1 text-sm font-medium text-red-600 sm:mt-0 sm:col-span-2">{{ $records->where('payment_status', '!=', 'LUNAS')->count() }} blok</dd>
                 </div>
                 <div class="bg-white px-3 py-4 sm:px-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt class="text-sm font-medium text-gray-500">Status Periode</dt>
@@ -57,10 +69,6 @@
                             {{ $period->status }}
                         </span>
                     </dd>
-                </div>
-                <div class="bg-gray-50 px-3 py-4 sm:px-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt class="text-sm font-medium text-gray-500">Total Record</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $records->total() }} record</dd>
                 </div>
             </dl>
         </div>

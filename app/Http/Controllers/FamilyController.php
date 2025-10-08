@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Family;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class FamilyController extends Controller
 {
@@ -112,7 +114,7 @@ class FamilyController extends Controller
             \App\Models\User::create([
                 'name' => $headOfFamily->name,
                 'email' => $headOfFamily->nik . '@kk.local', // Temporary email
-                'password' => \Hash::make($password),
+                'password' => Hash::make($password),
                 'role' => 'user',
                 'family_card_number' => $family->family_card_number,
             ]);
@@ -123,17 +125,58 @@ class FamilyController extends Controller
 
     /**
      * Show user's own family data
+     * Data diambil dari ResidentBlock terlebih dahulu
      */
     public function myFamily()
     {
-        $user = auth()->user();
-        $family = $user->family;
+        $user = Auth::user();
 
-        if (!$family) {
-            return redirect()->route('dashboard')->with('error', 'Data keluarga tidak ditemukan');
+        // Cari data blok berdasarkan blok user
+        $residentBlock = \App\Models\ResidentBlock::where('block', $user->block)->first();
+
+        if (!$residentBlock) {
+            return redirect()->route('dashboard')->with('error', 'Data blok tidak ditemukan. Silakan hubungi admin.');
         }
 
-        return view('families.my-family', compact('family'));
+        // Ambil data keluarga dari blok
+        $family = $residentBlock->family;
+
+        // Jika tidak ada data KK (family_id null atau family tidak ditemukan), buat data dummy
+        if (!$family || !$residentBlock->family_id) {
+            // Buat family dummy dengan data kosong
+            $family = new \App\Models\Family([
+                'family_card_number' => null,
+                'head_of_family_name' => null,
+                'address' => null,
+                'rt' => null,
+                'rw' => null,
+                'village' => null,
+                'sub_district' => null,
+                'city' => null,
+                'province' => null,
+                'postal_code' => null,
+                'block' => $user->block,
+                'status' => null,
+            ]);
+
+            // Buat family member dummy dari data user
+            $familyMember = new \App\Models\FamilyMember([
+                'nik' => $user->nik,
+                'name' => $user->name,
+                'gender' => 'L', // Default, bisa disesuaikan
+                'date_of_birth' => now()->subYears(25), // Default
+                'marital_status' => 'Belum Kawin',
+                'relationship_to_head' => 'Kepala Keluarga',
+                'citizenship' => 'WNI',
+                'status' => 'tetap',
+            ]);
+
+            // Set relasi
+            $family->setRelation('familyMembers', collect([$familyMember]));
+            $family->hasNoKK = true; // Flag untuk view
+        }
+
+        return view('families.my-family', compact('family', 'residentBlock'));
     }
 
     /**

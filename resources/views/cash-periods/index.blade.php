@@ -60,9 +60,8 @@
             </div>
 
                         <div class="text-sm text-gray-500">
-                <p>Due: {{ $period->due_date->format('d M Y') }}</p>
-                            <p class="text-xs text-gray-400 mt-1">Total: Rp {{ number_format($period->total_amount) }}</p>
-            </div>
+                            <p>Due: {{ $period->due_date->format('d M Y') }}</p>
+                        </div>
 
             <div class="flex items-center justify-between pt-2">
                 <div class="flex space-x-2">
@@ -192,11 +191,11 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $period->period_name }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $period->period_code }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $period->due_date->format('d M Y') }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $period->status == 'ACTIVE' ? 'bg-green-100 text-green-800' : ($period->status == 'CLOSED' ? 'bg-gray-100 text-gray-800' : 'bg-blue-100 text-blue-800') }}">
-                            {{ $period->status }}
-                        </span>
-                    </td>
+                                {{ $period->status }}
+                            </span>
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $period->cash_records_count }} record</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div class="flex space-x-2">
@@ -231,7 +230,7 @@
                 </tr>
                 @empty
                 <tr>
-                        <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">Belum ada data periode kas</td>
+                    <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">Belum ada data periode kas</td>
                 </tr>
                 @endforelse
             </tbody>

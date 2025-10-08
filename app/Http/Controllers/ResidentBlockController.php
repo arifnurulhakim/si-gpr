@@ -66,7 +66,7 @@ class ResidentBlockController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'block' => 'required|string|max:10',
+            'block' => 'required|string|max:10|unique:resident_blocks,block',
             'resident_id' => 'required|exists:family_members,id|unique:resident_blocks,resident_id',
         ]);
 
@@ -79,6 +79,12 @@ class ResidentBlockController extends Controller
         $existingBlock = ResidentBlock::where('resident_id', $request->resident_id)->first();
         if ($existingBlock) {
             return back()->withErrors(['resident_id' => 'Warga ini sudah memiliki blok']);
+        }
+
+        // Check if block is already assigned
+        $blockExists = ResidentBlock::where('block', $request->block)->first();
+        if ($blockExists) {
+            return back()->withErrors(['block' => 'Nomor blok ini sudah digunakan oleh warga lain']);
         }
 
         $residentBlock = ResidentBlock::create($request->all());
@@ -120,13 +126,21 @@ class ResidentBlockController extends Controller
     public function update(Request $request, ResidentBlock $residentBlock)
     {
         $request->validate([
-            'block' => 'required|string|max:10',
+            'block' => 'required|string|max:10|unique:resident_blocks,block,' . $residentBlock->id,
             'resident_id' => 'required|exists:family_members,id|unique:resident_blocks,resident_id,' . $residentBlock->id,
         ]);
 
         // Validate block format
         if (!ResidentBlock::isValidBlockFormat($request->block)) {
             return back()->withErrors(['block' => 'Format blok tidak valid. Gunakan format seperti D1-12 atau D1-12A']);
+        }
+
+        // Check if block is already assigned to another resident
+        $blockExists = ResidentBlock::where('block', $request->block)
+                                    ->where('id', '!=', $residentBlock->id)
+                                    ->first();
+        if ($blockExists) {
+            return back()->withErrors(['block' => 'Nomor blok ini sudah digunakan oleh warga lain']);
         }
 
         $residentBlock->update($request->all());

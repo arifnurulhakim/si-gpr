@@ -42,25 +42,21 @@
                     <dt class="text-sm font-medium text-gray-500">Tanggal Jatuh Tempo</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $period->due_date->format('d M Y') }}</dd>
                 </div>
+                <div class="bg-gray-50 px-3 py-4 sm:px-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Total Kas Lunas</dt>
+                    <dd class="mt-1 text-sm font-medium text-green-600 sm:mt-0 sm:col-span-2">Rp {{ number_format($records->where('payment_status', 'LUNAS')->sum('total_payment')) }}</dd>
+                </div>
                 <div class="bg-white px-3 py-4 sm:px-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt class="text-sm font-medium text-gray-500">Uang Kas</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">Rp {{ number_format($period->cash_amount) }}</dd>
+                    <dt class="text-sm font-medium text-gray-500">Total Kas Belum Lunas</dt>
+                    <dd class="mt-1 text-sm font-medium text-red-600 sm:mt-0 sm:col-span-2">Rp {{ number_format($records->where('payment_status', '!=', 'LUNAS')->sum('total_payment')) }}</dd>
                 </div>
                 <div class="bg-gray-50 px-3 py-4 sm:px-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt class="text-sm font-medium text-gray-500">Uang Ronda</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">Rp {{ number_format($period->patrol_amount) }}</dd>
+                    <dt class="text-sm font-medium text-gray-500">Blok Lunas</dt>
+                    <dd class="mt-1 text-sm font-medium text-green-600 sm:mt-0 sm:col-span-2">{{ $records->where('payment_status', 'LUNAS')->count() }} blok</dd>
                 </div>
                 <div class="bg-white px-3 py-4 sm:px-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt class="text-sm font-medium text-gray-500">Lain-lain</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">Rp {{ number_format($period->other_amount) }}</dd>
-                </div>
-                <div class="bg-gray-50 px-3 py-4 sm:px-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt class="text-sm font-medium text-gray-500">Biaya Admin</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">Rp {{ number_format($period->admin_fee) }}</dd>
-                </div>
-                <div class="bg-white px-3 py-4 sm:px-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt class="text-sm font-medium text-gray-500">Total per Keluarga</dt>
-                    <dd class="mt-1 text-sm font-medium text-gray-900 sm:mt-0 sm:col-span-2">Rp {{ number_format($period->total_amount) }}</dd>
+                    <dt class="text-sm font-medium text-gray-500">Blok Belum Lunas</dt>
+                    <dd class="mt-1 text-sm font-medium text-red-600 sm:mt-0 sm:col-span-2">{{ $records->where('payment_status', '!=', 'LUNAS')->count() }} blok</dd>
                 </div>
                 <div class="bg-gray-50 px-3 py-4 sm:px-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt class="text-sm font-medium text-gray-500">Status</dt>

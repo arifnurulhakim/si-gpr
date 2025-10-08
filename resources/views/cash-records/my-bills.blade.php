@@ -8,21 +8,44 @@
         <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Tagihan Kas Saya</h1>
     </div>
 
+    <!-- Info Blok -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-3 py-4 sm:px-4 sm:py-5 sm:px-6">
+            <h3 class="text-base sm:text-lg leading-6 font-medium text-gray-900">Informasi Blok</h3>
+        </div>
+        <div class="border-t border-gray-200">
+            <dl>
+                <div class="bg-gray-50 px-3 py-4 sm:px-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Blok</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $residentBlock->block }}</dd>
+                </div>
+                <div class="bg-white px-3 py-4 sm:px-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Kepala Keluarga</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $residentBlock->family->head_of_family_name ?? 'N/A' }}</dd>
+                </div>
+                <div class="bg-gray-50 px-3 py-4 sm:px-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">No. KK</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $residentBlock->family->family_card_number ?? 'N/A' }}</dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+
     <!-- Summary Cards -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         @php
             $totalBills = $records->total();
             $pendingBills = $records->where('payment_status', 'PENDING')->count();
-            $paidBills = $records->where('payment_status', 'LUNAS')->count();
             $overdueBills = $records->where('payment_status', 'OVERDUE')->count();
+            $paidBills = $records->where('payment_status', 'LUNAS')->count();
         @endphp
 
         <div class="bg-white overflow-hidden shadow rounded-lg">
             <div class="p-4 sm:p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 sm:h-6 sm:w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        <svg class="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                     </div>
                     <div class="ml-3 sm:ml-5 w-0 flex-1">
@@ -45,7 +68,7 @@
                     </div>
                     <div class="ml-3 sm:ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-xs sm:text-sm font-medium text-gray-500 truncate">Pending</dt>
+                            <dt class="text-xs sm:text-sm font-medium text-gray-500 truncate">Menunggu Bayar</dt>
                             <dd class="text-base sm:text-lg font-medium text-yellow-600">{{ $pendingBills }}</dd>
                         </dl>
                     </div>
@@ -57,8 +80,26 @@
             <div class="p-4 sm:p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 sm:h-6 sm:w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                        </svg>
+                    </div>
+                    <div class="ml-3 sm:ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-xs sm:text-sm font-medium text-gray-500 truncate">Terlambat</dt>
+                            <dd class="text-base sm:text-lg font-medium text-red-600">{{ $overdueBills }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-4 sm:p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
                         <svg class="h-5 w-5 sm:h-6 sm:w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
                     <div class="ml-3 sm:ml-5 w-0 flex-1">
@@ -90,34 +131,6 @@
                 </div>
             </div>
             <span class="text-sm text-gray-500">per halaman</span>
-        </div>
-
-        <!-- Sort Options -->
-        <div class="flex items-center space-x-3">
-            <label for="sort_by" class="text-sm font-medium text-gray-700">Urutkan:</label>
-            <div class="relative">
-                <select id="sort_by" name="sort_by" onchange="updateSort(this.value, '{{ request('sort_order', 'desc') }}')" class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm font-medium text-gray-700 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
-                    <option value="created_at" {{ request('sort_by', 'created_at') == 'created_at' ? 'selected' : '' }}>Tanggal Dibuat</option>
-                    <option value="total_payment" {{ request('sort_by') == 'total_payment' ? 'selected' : '' }}>Total Pembayaran</option>
-                    <option value="payment_status" {{ request('sort_by') == 'payment_status' ? 'selected' : '' }}>Status</option>
-                </select>
-                <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </div>
-            </div>
-            <button onclick="updateSort('{{ request('sort_by', 'created_at') }}', '{{ request('sort_order', 'desc') == 'desc' ? 'asc' : 'desc' }}')" class="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                @if(request('sort_order', 'desc') == 'desc')
-                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                </svg>
-                @else
-                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                </svg>
-                @endif
-            </button>
         </div>
     </div>
 
@@ -302,13 +315,6 @@
 function updatePerPage(value) {
     const url = new URL(window.location);
     url.searchParams.set('per_page', value);
-    window.location.href = url.toString();
-}
-
-function updateSort(sortBy, sortOrder) {
-    const url = new URL(window.location);
-    url.searchParams.set('sort_by', sortBy);
-    url.searchParams.set('sort_order', sortOrder);
     window.location.href = url.toString();
 }
 </script>
