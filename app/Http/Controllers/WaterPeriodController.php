@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\WaterPeriod;
 use App\Models\WaterUsageRecord;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class WaterPeriodController extends Controller
 {
@@ -60,7 +61,7 @@ class WaterPeriodController extends Controller
             'price_per_m3' => $request->price_per_m3,
             'admin_fee' => $request->admin_fee,
             'status' => 'ACTIVE',
-            'created_by' => auth()->id(),
+            'created_by' => Auth::id(),
         ]);
 
         return redirect()->route('water-periods.index')->with('success', 'Periode air berhasil dibuat');
@@ -149,5 +150,27 @@ class WaterPeriodController extends Controller
         $period->update(['status' => 'CLOSED']);
 
         return redirect()->back()->with('success', 'Periode berhasil ditutup');
+    }
+
+    /**
+     * Permanently delete the period and all related records
+     */
+    public function forceDelete(string $id)
+    {
+        $period = WaterPeriod::findOrFail($id);
+
+        // Delete all related water usage records and their payment proofs
+        foreach ($period->waterUsageRecords as $record) {
+            // Delete payment proof file if exists
+            if ($record->payment_proof_path) {
+                \Storage::disk('public')->delete($record->payment_proof_path);
+            }
+            $record->delete();
+        }
+
+        // Delete the period
+        $period->delete();
+
+        return redirect()->route('water-periods.index')->with('success', 'Periode air dan semua data terkait berhasil dihapus permanen');
     }
 }

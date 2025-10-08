@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Family extends Model
 {
@@ -36,6 +37,14 @@ class Family extends Model
     public function familyCardRequests(): HasMany
     {
         return $this->hasMany(FamilyCardRequest::class);
+    }
+
+    /**
+     * Get the resident block associated with this family (1 block = 1 KK)
+     */
+    public function residentBlock(): HasOne
+    {
+        return $this->hasOne(ResidentBlock::class, 'family_id');
     }
 
     public function waterUsageRecords(): HasMany
@@ -95,5 +104,34 @@ class Family extends Model
             ->whereHas('cashPeriod', function($query) {
                 $query->where('due_date', '<', now());
             });
+    }
+
+    /**
+     * Add an existing family member to this family
+     */
+    public function addExistingMember(FamilyMember $member): bool
+    {
+        return $member->assignToFamily($this->id);
+    }
+
+    /**
+     * Add multiple existing family members to this family
+     */
+    public function addExistingMembers(array $memberIds): bool
+    {
+        return FamilyMember::whereIn('id', $memberIds)
+            ->whereNull('family_id')
+            ->update(['family_id' => $this->id]) > 0;
+    }
+
+    /**
+     * Remove a family member from this family
+     */
+    public function removeMember(FamilyMember $member): bool
+    {
+        if ($member->family_id === $this->id) {
+            return $member->removeFromFamily();
+        }
+        return false;
     }
 }

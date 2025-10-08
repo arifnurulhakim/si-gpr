@@ -7,6 +7,7 @@ use App\Models\CashRecord;
 use App\Models\Family;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class CashRecordController extends Controller
 {
@@ -19,7 +20,7 @@ class CashRecordController extends Controller
         $sortBy = $request->get('sort_by', 'created_at');
         $sortOrder = $request->get('sort_order', 'desc');
 
-        $query = CashRecord::with(['family', 'cashPeriod']);
+        $query = CashRecord::with(['family', 'residentBlock', 'cashPeriod']);
 
         // Apply sorting
         if (in_array($sortBy, ['total_payment', 'payment_status', 'created_at'])) {
@@ -39,8 +40,8 @@ class CashRecordController extends Controller
      */
     public function create(CashPeriod $cashPeriod)
     {
-        $families = Family::orderBy('family_card_number')->get();
-        return view('cash-records.create', compact('cashPeriod', 'families'));
+        $residentBlocks = \App\Models\ResidentBlock::with('family')->orderBy('block')->get();
+        return view('cash-records.create', compact('cashPeriod', 'residentBlocks'));
     }
 
     /**
@@ -49,7 +50,7 @@ class CashRecordController extends Controller
     public function store(Request $request, CashPeriod $cashPeriod)
     {
         $request->validate([
-            'family_id' => 'required|exists:families,id',
+            'block_id' => 'required|exists:resident_blocks,id',
             'cash_amount' => 'required|numeric|min:0',
             'patrol_amount' => 'required|numeric|min:0',
             'other_amount' => 'required|numeric|min:0',
@@ -57,15 +58,19 @@ class CashRecordController extends Controller
 
         $totalPayment = $request->cash_amount + $request->patrol_amount + $request->other_amount + $cashPeriod->admin_fee;
 
+        // Get resident block for reference
+        $residentBlock = \App\Models\ResidentBlock::findOrFail($request->block_id);
+
         CashRecord::create([
-            'family_id' => $request->family_id,
+            'family_id' => $residentBlock->family_id, // Keep for reference, can be null
+            'block_id' => $request->block_id,
             'cash_period_id' => $cashPeriod->id,
             'cash_amount' => $request->cash_amount,
             'patrol_amount' => $request->patrol_amount,
             'other_amount' => $request->other_amount,
             'total_payment' => $totalPayment,
             'payment_status' => 'PENDING',
-            'recorded_by' => auth()->id(),
+            'recorded_by' => Auth::id(),
             'recorded_at' => now(),
         ]);
 
@@ -87,8 +92,8 @@ class CashRecordController extends Controller
      */
     public function edit(CashPeriod $cashPeriod, CashRecord $cashRecord)
     {
-        $families = Family::orderBy('family_card_number')->get();
-        return view('cash-records.edit', compact('cashPeriod', 'cashRecord', 'families'));
+        $residentBlocks = \App\Models\ResidentBlock::with('family')->orderBy('block')->get();
+        return view('cash-records.edit', compact('cashPeriod', 'cashRecord', 'residentBlocks'));
     }
 
     /**
@@ -97,7 +102,7 @@ class CashRecordController extends Controller
     public function update(Request $request, CashPeriod $cashPeriod, CashRecord $cashRecord)
     {
         $request->validate([
-            'family_id' => 'required|exists:families,id',
+            'block_id' => 'required|exists:resident_blocks,id',
             'cash_amount' => 'required|numeric|min:0',
             'patrol_amount' => 'required|numeric|min:0',
             'other_amount' => 'required|numeric|min:0',
@@ -105,8 +110,12 @@ class CashRecordController extends Controller
 
         $totalPayment = $request->cash_amount + $request->patrol_amount + $request->other_amount + $cashPeriod->admin_fee;
 
+        // Get resident block for reference
+        $residentBlock = \App\Models\ResidentBlock::findOrFail($request->block_id);
+
         $cashRecord->update([
-            'family_id' => $request->family_id,
+            'family_id' => $residentBlock->family_id, // Keep for reference, can be null
+            'block_id' => $request->block_id,
             'cash_amount' => $request->cash_amount,
             'patrol_amount' => $request->patrol_amount,
             'other_amount' => $request->other_amount,
@@ -149,7 +158,8 @@ class CashRecordController extends Controller
 
         // Handle file upload
         $image = $request->file('payment_proof');
-        $imageName = time() . '_' . $cashRecord->family->family_card_number . '_' . $cashPeriod->period_code . '.' . $image->getClientOriginalExtension();
+        $familyCardNumber = $cashRecord->family ? $cashRecord->family->family_card_number : 'BLOCK-' . $cashRecord->block_id;
+        $imageName = time() . '_' . $familyCardNumber . '_' . $cashPeriod->period_code . '.' . $image->getClientOriginalExtension();
         $imagePath = $image->storeAs('payment-proofs', $imageName, 'public');
 
         $cashRecord->update([
@@ -174,7 +184,7 @@ class CashRecordController extends Controller
         if ($request->action === 'approve') {
             $cashRecord->update([
                 'payment_status' => 'LUNAS',
-                'verified_by' => auth()->id(),
+                'verified_by' => Auth::id(),
                 'verified_at' => now(),
                 'rejection_reason' => null,
             ]);
@@ -183,7 +193,7 @@ class CashRecordController extends Controller
         } else {
             $cashRecord->update([
                 'payment_status' => 'REJECTED',
-                'verified_by' => auth()->id(),
+                'verified_by' => Auth::id(),
                 'verified_at' => now(),
                 'rejection_reason' => $request->rejection_reason,
             ]);
@@ -197,18 +207,18 @@ class CashRecordController extends Controller
      */
     public function myCashBills(Request $request)
     {
-        $user = auth()->user();
-        $family = $user->family;
+        $user = Auth::user();
+        $residentBlock = $user->residentBlock;
 
-        if (!$family) {
-            return redirect()->route('dashboard')->with('error', 'Data keluarga tidak ditemukan');
+        if (!$residentBlock) {
+            return redirect()->route('dashboard')->with('error', 'Data blok tidak ditemukan');
         }
 
         $perPage = $request->get('per_page', 10);
         $sortBy = $request->get('sort_by', 'created_at');
         $sortOrder = $request->get('sort_order', 'desc');
 
-        $query = $family->cashRecords()->with('cashPeriod');
+        $query = $residentBlock->cashRecords()->with('cashPeriod');
 
         // Apply sorting
         if (in_array($sortBy, ['total_payment', 'payment_status', 'created_at'])) {
@@ -220,7 +230,7 @@ class CashRecordController extends Controller
         $records = $query->paginate($perPage);
         $records->appends($request->query());
 
-        return view('cash-records.my-bills', compact('records', 'family'));
+        return view('cash-records.my-bills', compact('records', 'residentBlock'));
     }
 
     /**

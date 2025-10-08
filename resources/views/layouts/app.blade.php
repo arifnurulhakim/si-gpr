@@ -66,6 +66,12 @@
                                 </svg>
                                 Warga
                             </a>
+                            <a href="{{ route('resident-blocks.index') }}" class="flex items-center px-4 py-2 text-sm text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors {{ request()->routeIs('resident-blocks.*') ? 'bg-indigo-50 text-indigo-700' : '' }}">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                                Rumah Warga
+                            </a>
                         </div>
                     </div>
 
@@ -118,6 +124,24 @@
                     </div>
                     @else
                     <!-- User Menu -->
+                    <!-- Profile Info -->
+                    <div class="px-4 py-3 bg-gray-50 rounded-lg mb-4">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center">
+                                <span class="text-white text-sm font-medium">{{ substr(Auth::user()->name, 0, 1) }}</span>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-gray-900">{{ Auth::user()->name }}</p>
+                                <p class="text-xs text-gray-500">NIK: {{ Auth::user()->nik }}</p>
+                                @if(Auth::user()->block)
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 mt-1">
+                                        Blok {{ Auth::user()->block }}
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
                     <a href="{{ route('my-family') }}" class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors {{ request()->routeIs('my-family') ? 'bg-indigo-50 text-indigo-700' : '' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
@@ -138,36 +162,33 @@
                         </svg>
                         Tagihan Kas Saya
                     </a>
+
+                    <!-- Profile Menu -->
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <a href="{{ route('user-profile.show') }}" class="flex items-center px-4 py-2 text-sm text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors {{ request()->routeIs('user-profile.*') ? 'bg-indigo-50 text-indigo-700' : '' }}">
+                            <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            Profil Saya
+                        </a>
+                    </div>
                     @endif
                 </div>
             </nav>
 
-            <!-- User Menu -->
+            <!-- Logout Button -->
             <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
-                            <span class="text-white text-sm font-medium">{{ substr(Auth::user()->name, 0, 1) }}</span>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-gray-700">{{ Auth::user()->name }}</p>
-                            <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ Auth::user()->isAdmin() ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' }}">
-                                {{ Auth::user()->isAdmin() ? 'Admin' : 'User' }}
-                            </span>
-                        </div>
-                    </div>
-                    <a href="{{ route('logout') }}"
-                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                       class="text-gray-400 hover:text-gray-600">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                        </svg>
-                    </a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
-                        @csrf
-                    </form>
-                </div>
+                <a href="{{ route('logout') }}"
+                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                   class="flex items-center w-full px-4 py-2 text-sm text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-700 transition-colors">
+                    <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    Keluar
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+                    @csrf
+                </form>
             </div>
         </div>
 

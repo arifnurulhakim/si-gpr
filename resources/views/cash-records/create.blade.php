@@ -56,16 +56,16 @@
             <div class="border-t border-gray-200 px-3 py-4 sm:px-4 sm:py-5 sm:px-6">
                 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div class="sm:col-span-2">
-                        <label for="family_id" class="block text-sm font-medium text-gray-700">Keluarga</label>
-                        <select name="family_id" id="family_id" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('family_id') border-red-300 @enderror">
-                            <option value="">Pilih Keluarga</option>
-                            @foreach($families as $family)
-                                <option value="{{ $family->id }}" {{ old('family_id') == $family->id ? 'selected' : '' }}>
-                                    {{ $family->family_card_number }} - {{ $family->head_of_family_name }}
+                        <label for="block_id" class="block text-sm font-medium text-gray-700">Blok</label>
+                        <select name="block_id" id="block_id" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('block_id') border-red-300 @enderror">
+                            <option value="">Pilih Blok</option>
+                            @foreach($residentBlocks as $residentBlock)
+                                <option value="{{ $residentBlock->id }}" {{ old('block_id') == $residentBlock->id ? 'selected' : '' }}>
+                                    {{ $residentBlock->block }} - {{ $residentBlock->family->head_of_family_name ?? 'N/A' }}
                                 </option>
                             @endforeach
                         </select>
-                        @error('family_id')
+                        @error('block_id')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>

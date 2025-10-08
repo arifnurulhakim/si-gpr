@@ -36,20 +36,20 @@
             @method('PUT')
 
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <!-- Pilih Keluarga -->
+                <!-- Pilih Blok -->
                 <div class="sm:col-span-2">
-                    <label for="family_id" class="block text-sm font-medium text-gray-700">
-                        Pilih Keluarga <span class="text-red-500">*</span>
+                    <label for="block_id" class="block text-sm font-medium text-gray-700">
+                        Pilih Blok <span class="text-red-500">*</span>
                     </label>
-                    <select name="family_id" id="family_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('family_id') border-red-300 @enderror" required>
-                        <option value="">-- Pilih Keluarga --</option>
-                        @foreach($families as $family)
-                            <option value="{{ $family->id }}" {{ old('family_id', $waterUsageRecord->family_id) == $family->id ? 'selected' : '' }}>
-                                {{ $family->family_card_number }} - {{ $family->head_of_family_name }}
+                    <select name="block_id" id="block_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm @error('block_id') border-red-300 @enderror" required>
+                        <option value="">-- Pilih Blok --</option>
+                        @foreach($residentBlocks as $residentBlock)
+                            <option value="{{ $residentBlock->id }}" {{ old('block_id', $waterUsageRecord->block_id) == $residentBlock->id ? 'selected' : '' }}>
+                                {{ $residentBlock->block }} - {{ $residentBlock->family->head_of_family_name ?? 'N/A' }}
                             </option>
                         @endforeach
                     </select>
-                    @error('family_id')
+                    @error('block_id')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>

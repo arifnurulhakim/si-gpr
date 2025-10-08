@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FamilyController;
 use App\Http\Controllers\FamilyMemberController;
+use App\Http\Controllers\ResidentBlockController;
+use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\WaterPeriodController;
 use App\Http\Controllers\WaterUsageController;
 use App\Http\Controllers\CashPeriodController;
@@ -17,16 +19,23 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    // User Profile Routes
+    Route::get('/profile', [UserProfileController::class, 'show'])->name('user-profile.show');
+    Route::get('/profile/edit', [UserProfileController::class, 'edit'])->name('user-profile.edit');
+    Route::put('/profile', [UserProfileController::class, 'update'])->name('user-profile.update');
+
     // Admin only routes
     Route::middleware(['role:admin'])->group(function () {
         Route::resource('families', FamilyController::class);
         Route::resource('family-members', FamilyMemberController::class);
+        Route::resource('resident-blocks', ResidentBlockController::class);
         Route::get('families/export/excel', [FamilyController::class, 'export'])->name('families.export');
         Route::get('families/{id}/export/pdf', [FamilyController::class, 'exportPdf'])->name('families.export.pdf');
 
         // Water Periods
         Route::resource('water-periods', WaterPeriodController::class);
         Route::post('water-periods/{waterPeriod}/close', [WaterPeriodController::class, 'close'])->name('water-periods.close');
+        Route::delete('water-periods/{waterPeriod}/force-delete', [WaterPeriodController::class, 'forceDelete'])->name('water-periods.force-delete');
 
         // Water Usage Records (nested under water periods)
         Route::get('water-periods/{waterPeriod}/records/create', [WaterUsageController::class, 'create'])->name('water-usage.create');
@@ -46,6 +55,7 @@ Route::middleware(['auth'])->group(function () {
         // Cash Periods
         Route::resource('cash-periods', CashPeriodController::class);
         Route::post('cash-periods/{cashPeriod}/close', [CashPeriodController::class, 'close'])->name('cash-periods.close');
+        Route::delete('cash-periods/{cashPeriod}/force-delete', [CashPeriodController::class, 'forceDelete'])->name('cash-periods.force-delete');
 
         // Cash Records (nested under cash periods)
         Route::get('cash-periods/{cashPeriod}/records/create', [CashRecordController::class, 'create'])->name('cash-records.create');

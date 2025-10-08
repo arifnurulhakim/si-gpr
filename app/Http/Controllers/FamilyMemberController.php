@@ -17,8 +17,16 @@ class FamilyMemberController extends Controller
         $perPage = $request->get('per_page', 10);
         $sortBy = $request->get('sort_by', 'created_at');
         $sortOrder = $request->get('sort_order', 'desc');
+        $filter = $request->get('filter', 'all');
 
         $query = FamilyMember::with('family');
+
+        // Apply filter
+        if ($filter === 'with_family') {
+            $query->whereNotNull('family_id');
+        } elseif ($filter === 'without_family') {
+            $query->whereNull('family_id');
+        }
 
         // Apply sorting
         if (in_array($sortBy, ['nik', 'name', 'gender', 'date_of_birth', 'marital_status', 'relationship_to_head', 'citizenship', 'status', 'created_at'])) {
@@ -30,7 +38,12 @@ class FamilyMemberController extends Controller
         $familyMembers = $query->paginate($perPage);
         $familyMembers->appends($request->query());
 
-        return view('family-members.index', compact('familyMembers'));
+        // Get counts for filter buttons
+        $totalCount = FamilyMember::count();
+        $withFamilyCount = FamilyMember::whereNotNull('family_id')->count();
+        $withoutFamilyCount = FamilyMember::whereNull('family_id')->count();
+
+        return view('family-members.index', compact('familyMembers', 'filter', 'totalCount', 'withFamilyCount', 'withoutFamilyCount'));
     }
 
     /**

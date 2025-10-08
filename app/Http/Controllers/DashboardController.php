@@ -8,6 +8,7 @@ use App\Models\FamilyCardRequest;
 use App\Models\WaterPeriod;
 use App\Models\WaterUsageRecord;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -31,10 +32,11 @@ class DashboardController extends Controller
         $userPendingBills = null;
         $userOverdueBills = null;
 
-        if (auth()->user()->isUser() && auth()->user()->family) {
-            $userWaterBills = auth()->user()->family->waterUsageRecords()->count();
-            $userPendingBills = auth()->user()->family->waterUsageRecords()->where('payment_status', 'PENDING')->count();
-            $userOverdueBills = auth()->user()->family->waterUsageRecords()->where('payment_status', 'OVERDUE')->count();
+        $user = Auth::user();
+        if ($user && $user->role === 'user' && $user->residentBlock) {
+            $userWaterBills = $user->residentBlock->waterUsageRecords()->count();
+            $userPendingBills = $user->residentBlock->waterUsageRecords()->where('payment_status', 'PENDING')->count();
+            $userOverdueBills = $user->residentBlock->waterUsageRecords()->where('payment_status', 'OVERDUE')->count();
         }
 
         return view('dashboard', compact(

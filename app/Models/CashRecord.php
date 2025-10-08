@@ -10,6 +10,7 @@ class CashRecord extends Model
 {
     protected $fillable = [
         'family_id',
+        'block_id',
         'cash_period_id',
         'cash_amount',
         'patrol_amount',
@@ -38,6 +39,11 @@ class CashRecord extends Model
     public function family(): BelongsTo
     {
         return $this->belongsTo(Family::class);
+    }
+
+    public function residentBlock(): BelongsTo
+    {
+        return $this->belongsTo(ResidentBlock::class, 'block_id');
     }
 
     public function cashPeriod(): BelongsTo

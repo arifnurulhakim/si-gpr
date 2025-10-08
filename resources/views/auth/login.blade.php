@@ -66,20 +66,69 @@
                 <form class="mt-8 space-y-6" action="{{ route('login') }}" method="POST">
                     @csrf
 
-                    <div class="space-y-4">
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                                Email atau Nomor KK
-                            </label>
-                            <input id="email" name="email" type="text" autocomplete="email" required
-                                   class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base @error('email') border-red-500 @enderror"
-                                   placeholder="Contoh: admin@ekk.com atau 3273011234567890" value="{{ old('email') }}">
-                            @error('email')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                            <p class="mt-1 text-xs text-gray-500">
-                                Masukkan email admin atau nomor KK untuk login
-                            </p>
+                    <!-- Login Mode Toggle -->
+                    <div class="flex justify-center mb-6">
+                        <div class="inline-flex rounded-lg border border-gray-200 bg-gray-100 p-1">
+                            <button type="button" id="adminModeBtn" onclick="switchLoginMode('admin')" class="px-4 py-2 text-sm font-medium rounded-md bg-white text-gray-900 shadow-sm">
+                                Admin Login
+                            </button>
+                            <button type="button" id="residentModeBtn" onclick="switchLoginMode('resident')" class="px-4 py-2 text-sm font-medium rounded-md text-gray-700">
+                                Resident Login
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <!-- Admin Login Fields -->
+                        <div id="adminLoginFields">
+                            <div>
+                                <label for="login" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Email / NIK
+                                </label>
+                                <input id="login" name="login" type="text" autocomplete="username"
+                                       class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base @error('login') border-red-500 @enderror"
+                                       placeholder="admin@ekk.com atau 1234567890123456"
+                                       value="{{ old('login') }}">
+                                @error('login')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Masukkan email admin atau NIK Anda
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Resident Login Fields -->
+                        <div id="residentLoginFields" class="hidden">
+                            <div class="mb-4">
+                                <label for="block" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Blok Rumah
+                                </label>
+                                <input id="block" name="block" type="text" autocomplete="off"
+                                       class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base @error('block') border-red-500 @enderror"
+                                       placeholder="Contoh: D1-12">
+                                @error('block')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Masukkan nomor blok rumah Anda (contoh: D1-12)
+                                </p>
+                            </div>
+                            <div>
+                                <label for="nik" class="block text-sm font-medium text-gray-700 mb-2">
+                                    NIK
+                                </label>
+                                <input id="nik" name="nik" type="text" autocomplete="off"
+                                       class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base @error('nik') border-red-500 @enderror"
+                                       placeholder="16 digit NIK"
+                                       maxlength="16">
+                                @error('nik')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Masukkan NIK Anda (16 digit)
+                                </p>
+                            </div>
                         </div>
 
                         <div>
@@ -88,7 +137,7 @@
                             </label>
                             <input id="password" name="password" type="password" autocomplete="current-password" required
                                    class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base @error('password') border-red-500 @enderror"
-                                   placeholder="Password admin atau tanggal lahir (YYYY-MM-DD)">
+                                   placeholder="Masukkan password Anda">
                             @error('password')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -134,5 +183,50 @@
             </div>
         </div>
     </div>
+
+    <script>
+        let loginMode = 'admin'; // Default mode
+
+        function switchLoginMode(mode) {
+            loginMode = mode;
+
+            const adminModeBtn = document.getElementById('adminModeBtn');
+            const residentModeBtn = document.getElementById('residentModeBtn');
+            const adminLoginFields = document.getElementById('adminLoginFields');
+            const residentLoginFields = document.getElementById('residentLoginFields');
+
+            if (mode === 'admin') {
+                // Show admin fields
+                adminLoginFields.classList.remove('hidden');
+                residentLoginFields.classList.add('hidden');
+
+                // Update button styles
+                adminModeBtn.classList.add('bg-white', 'text-gray-900', 'shadow-sm');
+                adminModeBtn.classList.remove('text-gray-700');
+                residentModeBtn.classList.remove('bg-white', 'text-gray-900', 'shadow-sm');
+                residentModeBtn.classList.add('text-gray-700');
+
+                // Set required attributes
+                document.getElementById('login').required = true;
+                document.getElementById('block').required = false;
+                document.getElementById('nik').required = false;
+            } else {
+                // Show resident fields
+                adminLoginFields.classList.add('hidden');
+                residentLoginFields.classList.remove('hidden');
+
+                // Update button styles
+                residentModeBtn.classList.add('bg-white', 'text-gray-900', 'shadow-sm');
+                residentModeBtn.classList.remove('text-gray-700');
+                adminModeBtn.classList.remove('bg-white', 'text-gray-900', 'shadow-sm');
+                adminModeBtn.classList.add('text-gray-700');
+
+                // Set required attributes
+                document.getElementById('login').required = false;
+                document.getElementById('block').required = true;
+                document.getElementById('nik').required = true;
+            }
+        }
+    </script>
 </body>
 </html>

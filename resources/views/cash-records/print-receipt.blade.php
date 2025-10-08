@@ -211,19 +211,19 @@
             </div>
             <div class="info-row">
                 <span class="info-label">NO ID</span>
-                <span class="info-value">{{ $cashRecord->family->family_card_number }}</span>
+                <span class="info-value">{{ $cashRecord->family ? $cashRecord->family->family_card_number : 'Blok ' . $cashRecord->residentBlock->block }}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">NAMA</span>
-                <span class="info-value">{{ strtoupper(substr($cashRecord->family->head_of_family_name, 0, 20)) }}{{ strlen($cashRecord->family->head_of_family_name) > 20 ? '...' : '' }}</span>
+                <span class="info-value">{{ $cashRecord->family ? strtoupper(substr($cashRecord->family->head_of_family_name, 0, 20)) . (strlen($cashRecord->family->head_of_family_name) > 20 ? '...' : '') : 'N/A' }}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">ALAMAT</span>
-                <span class="info-value">{{ strtoupper(substr($cashRecord->family->address, 0, 25)) }}{{ strlen($cashRecord->family->address) > 25 ? '...' : '' }}</span>
+                <span class="info-value">{{ $cashRecord->family ? strtoupper(substr($cashRecord->family->address, 0, 25)) . (strlen($cashRecord->family->address) > 25 ? '...' : '') : 'N/A' }}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">BLOK</span>
-                <span class="info-value">{{ strtoupper($cashRecord->family->block ?? '-') }}</span>
+                <span class="info-value">{{ strtoupper($cashRecord->residentBlock->block ?? '-') }}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">PERIODE</span>

@@ -15,25 +15,47 @@
         </a>
     </div>
 
-    <!-- Per Page Selector -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-3 sm:space-y-0">
-        <div class="flex items-center space-x-3">
-            <label for="per_page" class="text-sm font-medium text-gray-700">Tampilkan:</label>
-            <div class="relative">
-                <select id="per_page" name="per_page" onchange="updatePerPage(this.value)" class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm font-medium text-gray-700 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
-                    <option value="5" {{ request('per_page', 10) == 5 ? 'selected' : '' }}>5</option>
-                    <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
-                    <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
-                    <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                    <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
-                </select>
-                <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
+    <!-- Filters and Per Page Selector -->
+    <div class="flex flex-col space-y-4">
+        <!-- Filter Buttons -->
+        <div class="flex flex-wrap gap-2">
+            <a href="{{ request()->fullUrlWithQuery(['filter' => 'all']) }}"
+               class="inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors {{ $filter === 'all' ? 'bg-indigo-100 text-indigo-800 border border-indigo-200' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50' }}">
+                Semua Warga
+                <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{{ $totalCount }}</span>
+            </a>
+            <a href="{{ request()->fullUrlWithQuery(['filter' => 'with_family']) }}"
+               class="inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors {{ $filter === 'with_family' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50' }}">
+                Sudah Memiliki Keluarga
+                <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">{{ $withFamilyCount }}</span>
+            </a>
+            <a href="{{ request()->fullUrlWithQuery(['filter' => 'without_family']) }}"
+               class="inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors {{ $filter === 'without_family' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50' }}">
+                Belum Memiliki Keluarga
+                <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">{{ $withoutFamilyCount }}</span>
+            </a>
+        </div>
+
+        <!-- Per Page Selector -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-3 sm:space-y-0">
+            <div class="flex items-center space-x-3">
+                <label for="per_page" class="text-sm font-medium text-gray-700">Tampilkan:</label>
+                <div class="relative">
+                    <select id="per_page" name="per_page" onchange="updatePerPage(this.value)" class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm font-medium text-gray-700 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
+                        <option value="5" {{ request('per_page', 10) == 5 ? 'selected' : '' }}>5</option>
+                        <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
+                        <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                        <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
                 </div>
+                <span class="text-sm text-gray-500">per halaman</span>
             </div>
-            <span class="text-sm text-gray-500">per halaman</span>
         </div>
     </div>
 
@@ -57,8 +79,16 @@
                         </div>
 
                         <div class="text-sm text-gray-500 space-y-1">
-                            <p><span class="font-medium">Kartu Keluarga:</span> {{ $member->family->family_card_number }}</p>
-                            <p><span class="font-medium">Kepala Keluarga:</span> {{ $member->family->head_of_family_name }}</p>
+                            @if($member->family)
+                                <p><span class="font-medium">Kartu Keluarga:</span> {{ $member->family->family_card_number }}</p>
+                                <p><span class="font-medium">Kepala Keluarga:</span> {{ $member->family->head_of_family_name }}</p>
+                            @else
+                                <p><span class="font-medium">Status Keluarga:</span>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        Belum Memiliki Keluarga
+                                    </span>
+                                </p>
+                            @endif
                             <p><span class="font-medium">Tanggal Lahir:</span> {{ $member->date_of_birth->format('d/m/Y') }}</p>
                             <p><span class="font-medium">Status:</span>
                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $member->status == 'tetap' ? 'bg-blue-100 text-blue-800' : 'bg-orange-100 text-orange-800' }}">
@@ -218,8 +248,14 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $member->nik }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $member->name }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $member->family->family_card_number }}<br>
-                            <span class="text-xs text-gray-400">{{ $member->family->head_of_family_name }}</span>
+                            @if($member->family)
+                                {{ $member->family->family_card_number }}<br>
+                                <span class="text-xs text-gray-400">{{ $member->family->head_of_family_name }}</span>
+                            @else
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    Belum Memiliki Keluarga
+                                </span>
+                            @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $member->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $member->date_of_birth->format('d/m/Y') }}</td>

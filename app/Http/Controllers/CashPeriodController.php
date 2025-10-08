@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CashPeriod;
 use App\Models\CashRecord;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CashPeriodController extends Controller
 {
@@ -63,7 +64,7 @@ class CashPeriodController extends Controller
             'patrol_amount' => $request->patrol_amount,
             'other_amount' => $request->other_amount,
             'admin_fee' => $request->admin_fee ?? 0,
-            'created_by' => auth()->id(),
+            'created_by' => Auth::id(),
         ]);
 
         return redirect()->route('cash-periods.index')
@@ -166,5 +167,27 @@ class CashPeriodController extends Controller
 
         return redirect()->route('cash-periods.show', $period->id)
             ->with('success', 'Periode kas berhasil ditutup');
+    }
+
+    /**
+     * Permanently delete the period and all related records
+     */
+    public function forceDelete(string $id)
+    {
+        $period = CashPeriod::findOrFail($id);
+
+        // Delete all related cash records and their payment proofs
+        foreach ($period->cashRecords as $record) {
+            // Delete payment proof file if exists
+            if ($record->payment_proof_path) {
+                \Storage::disk('public')->delete($record->payment_proof_path);
+            }
+            $record->delete();
+        }
+
+        // Delete the period
+        $period->delete();
+
+        return redirect()->route('cash-periods.index')->with('success', 'Periode kas dan semua data terkait berhasil dihapus permanen');
     }
 }

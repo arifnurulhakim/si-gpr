@@ -103,8 +103,8 @@
             <div class="border-t border-gray-200 p-4">
                 <div class="flex justify-between items-start">
                     <div class="flex-1">
-                        <p class="text-sm font-medium text-gray-900">{{ $record->family->head_of_family_name }}</p>
-                        <p class="text-sm text-gray-600">{{ $record->family->family_card_number }}</p>
+                        <p class="text-sm font-medium text-gray-900">{{ $record->family ? $record->family->head_of_family_name : 'Blok ' . $record->residentBlock->block }}</p>
+                        <p class="text-sm text-gray-600">{{ $record->family ? $record->family->family_card_number : 'N/A' }}</p>
                     </div>
                     <div class="flex items-center space-x-2">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $record->payment_status === 'LUNAS' ? 'bg-green-100 text-green-800' : ($record->payment_status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' : ($record->payment_status === 'PAYMENT_UPLOADED' ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800')) }}">
@@ -151,8 +151,8 @@
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div>
-                                <div class="text-sm font-medium text-gray-900">{{ $record->family->head_of_family_name }}</div>
-                                <div class="text-sm text-gray-500">{{ $record->family->family_card_number }}</div>
+                                <div class="text-sm font-medium text-gray-900">{{ $record->family ? $record->family->head_of_family_name : 'Blok ' . $record->residentBlock->block }}</div>
+                                <div class="text-sm text-gray-500">{{ $record->family ? $record->family->family_card_number : 'N/A' }}</div>
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">

@@ -7,6 +7,7 @@ use App\Models\WaterUsageRecord;
 use App\Models\Family;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class WaterUsageController extends Controller
 {
@@ -19,7 +20,7 @@ class WaterUsageController extends Controller
         $sortBy = $request->get('sort_by', 'created_at');
         $sortOrder = $request->get('sort_order', 'desc');
 
-        $query = WaterUsageRecord::with(['family', 'waterPeriod']);
+        $query = WaterUsageRecord::with(['family', 'residentBlock', 'waterPeriod']);
 
         // Apply sorting
         if (in_array($sortBy, ['usage_amount', 'bill_amount', 'total_payment', 'payment_status', 'created_at'])) {
@@ -39,8 +40,8 @@ class WaterUsageController extends Controller
      */
     public function create(WaterPeriod $waterPeriod)
     {
-        $families = Family::orderBy('family_card_number')->get();
-        return view('water-usage.create', compact('waterPeriod', 'families'));
+        $residentBlocks = \App\Models\ResidentBlock::with('family')->orderBy('block')->get();
+        return view('water-usage.create', compact('waterPeriod', 'residentBlocks'));
     }
 
     /**
@@ -49,7 +50,7 @@ class WaterUsageController extends Controller
     public function store(Request $request, WaterPeriod $waterPeriod)
     {
         $request->validate([
-            'family_id' => 'required|exists:families,id',
+            'block_id' => 'required|exists:resident_blocks,id',
             'initial_meter_reading' => 'required|numeric|min:0',
             'final_meter_reading' => 'required|numeric|min:0|gt:initial_meter_reading',
         ]);
@@ -58,8 +59,12 @@ class WaterUsageController extends Controller
         $billAmount = $usageAmount * $waterPeriod->price_per_m3;
         $totalPayment = $billAmount + $waterPeriod->admin_fee;
 
+        // Get resident block for reference
+        $residentBlock = \App\Models\ResidentBlock::findOrFail($request->block_id);
+
         WaterUsageRecord::create([
-            'family_id' => $request->family_id,
+            'family_id' => $residentBlock->family_id, // Keep for reference, can be null
+            'block_id' => $request->block_id,
             'water_period_id' => $waterPeriod->id,
             'initial_meter_reading' => $request->initial_meter_reading,
             'final_meter_reading' => $request->final_meter_reading,
@@ -67,7 +72,7 @@ class WaterUsageController extends Controller
             'bill_amount' => $billAmount,
             'total_payment' => $totalPayment,
             'payment_status' => 'PENDING',
-            'recorded_by' => auth()->id(),
+            'recorded_by' => Auth::id(),
             'recorded_at' => now(),
         ]);
 
@@ -89,8 +94,8 @@ class WaterUsageController extends Controller
      */
     public function edit(WaterPeriod $waterPeriod, WaterUsageRecord $waterUsageRecord)
     {
-        $families = Family::orderBy('family_card_number')->get();
-        return view('water-usage.edit', compact('waterPeriod', 'waterUsageRecord', 'families'));
+        $residentBlocks = \App\Models\ResidentBlock::with('family')->orderBy('block')->get();
+        return view('water-usage.edit', compact('waterPeriod', 'waterUsageRecord', 'residentBlocks'));
     }
 
     /**
@@ -99,7 +104,7 @@ class WaterUsageController extends Controller
     public function update(Request $request, WaterPeriod $waterPeriod, WaterUsageRecord $waterUsageRecord)
     {
         $request->validate([
-            'family_id' => 'required|exists:families,id',
+            'block_id' => 'required|exists:resident_blocks,id',
             'initial_meter_reading' => 'required|numeric|min:0',
             'final_meter_reading' => 'required|numeric|min:0|gt:initial_meter_reading',
         ]);
@@ -108,8 +113,12 @@ class WaterUsageController extends Controller
         $billAmount = $usageAmount * $waterPeriod->price_per_m3;
         $totalPayment = $billAmount + $waterPeriod->admin_fee;
 
+        // Get resident block for reference
+        $residentBlock = \App\Models\ResidentBlock::findOrFail($request->block_id);
+
         $waterUsageRecord->update([
-            'family_id' => $request->family_id,
+            'family_id' => $residentBlock->family_id, // Keep for reference, can be null
+            'block_id' => $request->block_id,
             'initial_meter_reading' => $request->initial_meter_reading,
             'final_meter_reading' => $request->final_meter_reading,
             'usage_amount' => $usageAmount,
@@ -153,7 +162,8 @@ class WaterUsageController extends Controller
 
         // Handle file upload
         $image = $request->file('payment_proof');
-        $imageName = time() . '_' . $waterUsageRecord->family->family_card_number . '_' . $waterPeriod->period_code . '.' . $image->getClientOriginalExtension();
+        $familyCardNumber = $waterUsageRecord->family ? $waterUsageRecord->family->family_card_number : 'BLOCK-' . $waterUsageRecord->block_id;
+        $imageName = time() . '_' . $familyCardNumber . '_' . $waterPeriod->period_code . '.' . $image->getClientOriginalExtension();
 
         // Store file using public disk explicitly
         $imagePath = Storage::disk('public')->putFileAs('payment-proofs', $image, $imageName);
@@ -179,7 +189,7 @@ class WaterUsageController extends Controller
 
         $data = [
             'payment_status' => $request->status,
-            'verified_by' => auth()->id(),
+            'verified_by' => Auth::id(),
             'verified_at' => now(),
         ];
 
@@ -198,18 +208,18 @@ class WaterUsageController extends Controller
      */
     public function myWaterBills(Request $request)
     {
-        $user = auth()->user();
-        $family = $user->family;
+        $user = Auth::user();
+        $residentBlock = $user->residentBlock;
 
-        if (!$family) {
-            return redirect()->route('dashboard')->with('error', 'Data keluarga tidak ditemukan');
+        if (!$residentBlock) {
+            return redirect()->route('dashboard')->with('error', 'Data blok tidak ditemukan');
         }
 
         $perPage = $request->get('per_page', 10);
         $sortBy = $request->get('sort_by', 'created_at');
         $sortOrder = $request->get('sort_order', 'desc');
 
-        $query = $family->waterUsageRecords()->with('waterPeriod');
+        $query = $residentBlock->waterUsageRecords()->with('waterPeriod');
 
         // Apply sorting
         if (in_array($sortBy, ['usage_amount', 'bill_amount', 'total_payment', 'payment_status', 'created_at'])) {
@@ -221,7 +231,7 @@ class WaterUsageController extends Controller
         $records = $query->paginate($perPage);
         $records->appends($request->query());
 
-        return view('water-usage.my-bills', compact('records', 'family'));
+        return view('water-usage.my-bills', compact('records', 'residentBlock'));
     }
 
     /**

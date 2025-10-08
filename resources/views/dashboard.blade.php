@@ -251,8 +251,8 @@
                     <div class="space-y-2">
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
-                                <p class="text-sm font-medium text-gray-900">{{ $record->family->family_card_number }}</p>
-                                <p class="text-sm text-gray-600">{{ $record->family->head_of_family_name }}</p>
+                                <p class="text-sm font-medium text-gray-900">{{ $record->family ? $record->family->family_card_number : 'Blok ' . $record->residentBlock->block }}</p>
+                                <p class="text-sm text-gray-600">{{ $record->family ? $record->family->head_of_family_name : 'N/A' }}</p>
                                 <p class="text-xs text-gray-500 mt-1">{{ $record->waterPeriod->period_name }}</p>
                             </div>
                             <div class="flex items-center space-x-2">
@@ -287,8 +287,8 @@
                         @forelse($recentWaterRecords as $record)
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ $record->family->family_card_number }}</div>
-                                <div class="text-sm text-gray-500">{{ $record->family->head_of_family_name }}</div>
+                                <div class="text-sm font-medium text-gray-900">{{ $record->family ? $record->family->family_card_number : 'Blok ' . $record->residentBlock->block }}</div>
+                                <div class="text-sm text-gray-500">{{ $record->family ? $record->family->head_of_family_name : 'N/A' }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $record->waterPeriod->period_name }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $record->usage_amount }} M3</td>

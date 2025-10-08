@@ -15,6 +15,9 @@ class WaterPeriod extends Model
         'price_per_m3',
         'admin_fee',
         'status',
+        'block',
+        'target_type',
+        'target_value',
         'created_by',
     ];
 
@@ -44,5 +47,17 @@ class WaterPeriod extends Model
     public function scopeOpen($query)
     {
         return $query->whereIn('status', ['ACTIVE', 'PENDING']);
+    }
+
+    // Scope untuk periode berdasarkan blok
+    public function scopeByBlock($query, $block)
+    {
+        return $query->where('block', $block);
+    }
+
+    // Scope untuk periode semua blok
+    public function scopeAllBlocks($query)
+    {
+        return $query->whereNull('block');
     }
 }

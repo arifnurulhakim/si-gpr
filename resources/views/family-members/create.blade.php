@@ -5,8 +5,11 @@
 @section('content')
 <div class="space-y-4 sm:space-y-6">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-3 sm:space-y-0">
-        <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Tambah Anggota Keluarga</h1>
-        <a href="{{ route('families.show', $familyId ?? 'index') }}" class="inline-flex items-center px-3 sm:px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+        <div>
+            <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Tambah Warga</h1>
+            <p class="text-sm text-gray-600 mt-1">Warga dapat dibuat tanpa keluarga terlebih dahulu</p>
+        </div>
+        <a href="{{ route('family-members.index') }}" class="inline-flex items-center px-3 sm:px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
             Kembali
         </a>
     </div>
@@ -18,16 +21,20 @@
 
                 <div class="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2">
                     <div>
-                        <label for="family_id" class="block text-sm font-medium text-gray-700">Kartu Keluarga</label>
-                        <select name="family_id" id="family_id" required
+                        <label for="family_id" class="block text-sm font-medium text-gray-700">
+                            Kartu Keluarga
+                            <span class="text-gray-500 font-normal">(Opsional)</span>
+                        </label>
+                        <select name="family_id" id="family_id"
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-base px-3 sm:px-4 py-2 sm:py-3">
-                            <option value="">Pilih Kartu Keluarga</option>
+                            <option value="">Tanpa Keluarga (Buat Warga Independen)</option>
                             @foreach($families as $family)
                                 <option value="{{ $family->id }}" {{ $familyId == $family->id ? 'selected' : '' }}>
                                     {{ $family->family_card_number }} - {{ $family->head_of_family_name }}
                                 </option>
                             @endforeach
                         </select>
+                        <p class="mt-1 text-xs text-gray-500">Kosongkan jika ingin membuat warga tanpa keluarga</p>
                         @error('family_id')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -156,15 +163,61 @@
                 </div>
 
                 <div class="mt-6 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
-                    <a href="{{ route('families.show', $familyId ?? 'index') }}" class="inline-flex items-center justify-center px-3 sm:px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                    <a href="{{ route('family-members.index') }}" class="inline-flex items-center justify-center px-3 sm:px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
                         Batal
                     </a>
                     <button type="submit" class="inline-flex items-center justify-center px-3 sm:px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
-                        Simpan
+                        Simpan Warga
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const familySelect = document.getElementById('family_id');
+    const relationshipSelect = document.getElementById('relationship_to_head');
+
+    function updateRelationshipOptions() {
+        const selectedFamily = familySelect.value;
+
+        if (selectedFamily === '') {
+            // Jika tidak ada keluarga, hanya tampilkan opsi yang relevan untuk warga independen
+            relationshipSelect.innerHTML = `
+                <option value="">Pilih Hubungan</option>
+                <option value="KEPALA KELUARGA">Kepala Keluarga</option>
+                <option value="LAINNYA">Lainnya</option>
+            `;
+
+            // Tambahkan class untuk menunjukkan status independen
+            document.querySelector('.bg-white').classList.add('border-blue-200');
+            document.querySelector('.bg-white').classList.remove('border-gray-200');
+        } else {
+            // Jika ada keluarga, tampilkan semua opsi
+            relationshipSelect.innerHTML = `
+                <option value="">Pilih Hubungan</option>
+                <option value="KEPALA KELUARGA">Kepala Keluarga</option>
+                <option value="SUAMI">Suami</option>
+                <option value="ISTRI">Istri</option>
+                <option value="ANAK">Anak</option>
+                <option value="ORANGTUA">Orang Tua</option>
+                <option value="FAMILI LAIN">Famili Lain</option>
+                <option value="PEMBANTU">Pembantu</option>
+                <option value="LAINNYA">Lainnya</option>
+            `;
+
+            // Kembalikan class normal
+            document.querySelector('.bg-white').classList.remove('border-blue-200');
+            document.querySelector('.bg-white').classList.add('border-gray-200');
+        }
+    }
+
+    familySelect.addEventListener('change', updateRelationshipOptions);
+
+    // Panggil fungsi saat halaman dimuat
+    updateRelationshipOptions();
+});
+</script>
 @endsection

@@ -211,19 +211,19 @@
             </div>
             <div class="info-row">
                 <span class="info-label">NO ID</span>
-                <span class="info-value">{{ $waterUsageRecord->family->family_card_number }}</span>
+                <span class="info-value">{{ $waterUsageRecord->family ? $waterUsageRecord->family->family_card_number : 'Blok ' . $waterUsageRecord->residentBlock->block }}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">NAMA</span>
-                <span class="info-value">{{ strtoupper(substr($waterUsageRecord->family->head_of_family_name, 0, 20)) }}{{ strlen($waterUsageRecord->family->head_of_family_name) > 20 ? '...' : '' }}</span>
+                <span class="info-value">{{ $waterUsageRecord->family ? strtoupper(substr($waterUsageRecord->family->head_of_family_name, 0, 20)) . (strlen($waterUsageRecord->family->head_of_family_name) > 20 ? '...' : '') : 'N/A' }}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">ALAMAT</span>
-                <span class="info-value">{{ strtoupper(substr($waterUsageRecord->family->address, 0, 25)) }}{{ strlen($waterUsageRecord->family->address) > 25 ? '...' : '' }}</span>
+                <span class="info-value">{{ $waterUsageRecord->family ? strtoupper(substr($waterUsageRecord->family->address, 0, 25)) . (strlen($waterUsageRecord->family->address) > 25 ? '...' : '') : 'N/A' }}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">BLOK</span>
-                <span class="info-value">{{ strtoupper($waterUsageRecord->family->block ?? '-') }}</span>
+                <span class="info-value">{{ strtoupper($waterUsageRecord->residentBlock->block ?? '-') }}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">PERIODE</span>

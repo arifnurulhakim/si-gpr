@@ -10,6 +10,7 @@ class WaterUsageRecord extends Model
 {
     protected $fillable = [
         'family_id',
+        'block_id',
         'water_period_id',
         'initial_meter_reading',
         'final_meter_reading',
@@ -40,6 +41,11 @@ class WaterUsageRecord extends Model
     public function family(): BelongsTo
     {
         return $this->belongsTo(Family::class);
+    }
+
+    public function residentBlock(): BelongsTo
+    {
+        return $this->belongsTo(ResidentBlock::class, 'block_id');
     }
 
     public function waterPeriod(): BelongsTo

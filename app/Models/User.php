@@ -22,7 +22,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'family_card_number',
+        'nik',
+        'block',
     ];
 
     /**
@@ -65,10 +66,70 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the family associated with this user
+     * Get the resident block associated with this user
+     */
+    public function residentBlock()
+    {
+        return $this->hasOne(ResidentBlock::class, 'block', 'block');
+    }
+
+    /**
+     * Get the family through resident block (1 block = 1 KK)
      */
     public function family()
     {
-        return $this->hasOne(Family::class, 'family_card_number', 'family_card_number');
+        return $this->hasOneThrough(
+            Family::class,
+            ResidentBlock::class,
+            'block', // Foreign key on resident_blocks table
+            'id', // Foreign key on families table
+            'block', // Local key on users table
+            'family_id' // Local key on resident_blocks table
+        );
+    }
+
+    /**
+     * Find user by block and NIK for authentication
+     */
+    public static function findByBlockAndNik(string $block, string $nik)
+    {
+        return self::where('block', $block)
+                   ->where('nik', $nik)
+                   ->first();
+    }
+
+    /**
+     * Find user by email or NIK for flexible login
+     */
+    public static function findByEmailOrNik(string $identifier)
+    {
+        // Check if it's an email
+        if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+            return self::where('email', $identifier)->first();
+        }
+
+        // Check if it's a NIK (16 digits)
+        if (preg_match('/^\d{16}$/', $identifier)) {
+            return self::where('nik', $identifier)->first();
+        }
+
+        return null;
+    }
+
+    /**
+     * Create user from resident block
+     */
+    public static function createFromResidentBlock(ResidentBlock $residentBlock)
+    {
+        $familyMember = $residentBlock->resident;
+
+        return self::create([
+            'name' => $familyMember->name,
+            'email' => $familyMember->nik . '@resident.local', // Temporary email
+            'password' => bcrypt($familyMember->nik), // Password is NIK
+            'role' => 'user',
+            'nik' => $familyMember->nik,
+            'block' => $residentBlock->block,
+        ]);
     }
 }
