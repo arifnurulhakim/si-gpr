@@ -132,11 +132,7 @@
                                 <a href="{{ route('water-usage.show', [$period->id, $record->id]) }}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">Lihat</a>
                                 <a href="{{ route('water-usage.edit', [$period->id, $record->id]) }}" class="text-yellow-600 hover:text-yellow-900 text-sm font-medium">Edit</a>
                             </div>
-                            <form action="{{ route('water-usage.destroy', [$period->id, $record->id]) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus record ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-900 text-sm font-medium">Hapus</button>
-                            </form>
+                            <button onclick="confirmRecordDelete(this)" data-record-id="{{ $record->id }}" data-record-name="Blok {{ $record->residentBlock ? $record->residentBlock->block : '' }}" class="text-red-600 hover:text-red-900 text-sm font-medium">Hapus</button>
                         </div>
                     </div>
                 </div>
@@ -192,15 +188,11 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                     </svg>
                                 </a>
-                                <form action="{{ route('water-usage.destroy', [$period->id, $record->id]) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus record ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900" title="Hapus">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                        </svg>
-                                    </button>
-                                </form>
+                                <button onclick="confirmRecordDelete(this)" data-record-id="{{ $record->id }}" data-record-name="Blok {{ $record->residentBlock ? $record->residentBlock->block : '' }}" class="text-red-600 hover:text-red-900" title="Hapus">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -268,12 +260,56 @@
     </div>
 </div>
 
+<!-- Delete Record Confirmation Modal -->
+<div id="deleteRecordModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+            </div>
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mt-2">Hapus Record Air</h3>
+            <div class="mt-2 px-7 py-3">
+                <p class="text-sm text-gray-500">
+                    Apakah Anda yakin ingin menghapus record <strong id="recordIdentifier"></strong>?
+                </p>
+                <p class="text-sm text-red-600 mt-2">
+                    <strong>PERINGATAN:</strong> Tindakan ini akan menghapus data record dan bukti pembayaran (jika ada). Tindakan ini tidak dapat dibatalkan!
+                </p>
+            </div>
+            <div class="items-center px-4 py-3">
+                <form id="deleteRecordForm" method="POST" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        Ya, Hapus Record
+                    </button>
+                </form>
+                <button onclick="closeDeleteRecordModal()" class="mt-3 px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                    Batal
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 function updatePerPage(value) {
     const url = new URL(window.location);
     url.searchParams.set('per_page', value);
     url.searchParams.delete('page'); // Reset to first page
     window.location.href = url.toString();
+}
+
+function confirmRecordDelete(recordId, recordName) {
+    document.getElementById('recordIdentifier').textContent = recordName;
+    document.getElementById('deleteRecordForm').action = `/water-periods/{{ $period->id }}/records/${recordId}`;
+    document.getElementById('deleteRecordModal').classList.remove('hidden');
+}
+
+function closeDeleteRecordModal() {
+    document.getElementById('deleteRecordModal').classList.add('hidden');
 }
 </script>
 @endsection
