@@ -19,7 +19,7 @@ class WaterMeterPhotoController extends Controller
         $user = Auth::user();
 
         // Find resident block based on user's block
-        $residentBlock = ResidentBlock::where('block', $user->block)->first();
+        $residentBlock = $user->residentBlock;
 
         if (!$residentBlock) {
             return redirect()->route('dashboard')
@@ -63,11 +63,8 @@ class WaterMeterPhotoController extends Controller
         $user = Auth::user();
 
         // Verify that the block belongs to the user
-        $residentBlock = ResidentBlock::where('id', $request->block_id)
-            ->where('block', $user->block)
-            ->first();
-
-        if (!$residentBlock) {
+        $residentBlock = $user->residentBlock;
+        if (!$residentBlock || $residentBlock->id != $request->block_id) {
             return redirect()->back()->with('error', 'Anda tidak memiliki akses ke blok ini.');
         }
 
@@ -105,7 +102,7 @@ class WaterMeterPhotoController extends Controller
 
         // Check if user has permission to view this photo
         if ($user->role === 'user') {
-            $residentBlock = ResidentBlock::where('block', $user->block)->first();
+            $residentBlock = $user->residentBlock;
             if (!$residentBlock || $waterMeterPhoto->block_id !== $residentBlock->id) {
                 abort(403, 'Anda tidak memiliki akses ke foto ini.');
             }
@@ -125,9 +122,9 @@ class WaterMeterPhotoController extends Controller
 
         // Check if user has permission to delete this photo
         if ($user->role === 'user') {
-            $residentBlock = ResidentBlock::where('block', $user->block)->first();
+            $residentBlock = $user->residentBlock;
             if (!$residentBlock || $waterMeterPhoto->block_id !== $residentBlock->id) {
-                abort(403, 'Anda tidak memiliki akses untuk menghapus foto ini.');
+                abort(403, 'ANDA TIDAK MEMILIKI AKSES UNTUK MENGHAPUS FOTO INI.');
             }
         }
 
@@ -159,7 +156,7 @@ class WaterMeterPhotoController extends Controller
 
         // Check if user has permission to update this photo
         if ($user->role === 'user') {
-            $residentBlock = ResidentBlock::where('block', $user->block)->first();
+            $residentBlock = $user->residentBlock;
             if (!$residentBlock || $waterMeterPhoto->block_id !== $residentBlock->id) {
                 abort(403, 'Anda tidak memiliki akses untuk mengubah foto ini.');
             }

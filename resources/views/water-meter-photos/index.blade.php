@@ -122,13 +122,12 @@
                                 <button onclick="viewPhoto('{{ $hasPhoto->photo_url }}')" class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
                                     Lihat Foto
                                 </button>
-                                <form action="{{ route('water-meter-photos.destroy', $hasPhoto->id) }}" method="POST" class="flex-1" onsubmit="return confirm('Yakin ingin menghapus foto ini?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="w-full inline-flex justify-center items-center px-3 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-600 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
-                                        Hapus
-                                    </button>
-                                </form>
+                                <button onclick="confirmPhotoDelete(this)"
+                                        data-photo-id="{{ $hasPhoto->id }}"
+                                        data-period-name="{{ $period->period_name }}"
+                                        class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-600 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                                    Hapus
+                                </button>
                             </div>
                             @endif
                         </div>
@@ -201,13 +200,12 @@
                                         <button onclick="viewPhoto('{{ $hasPhoto->photo_url }}')" class="inline-flex items-center px-3 py-1.5 border border-gray-300 rounded-md shadow-sm text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
                                             Lihat
                                         </button>
-                                        <form action="{{ route('water-meter-photos.destroy', $hasPhoto->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus foto ini?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-red-300 rounded-md shadow-sm text-xs font-medium text-red-600 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
-                                                Hapus
-                                            </button>
-                                        </form>
+                                        <button onclick="confirmPhotoDelete(this)"
+                                                data-photo-id="{{ $hasPhoto->id }}"
+                                                data-period-name="{{ $period->period_name }}"
+                                                class="inline-flex items-center px-3 py-1.5 border border-red-300 rounded-md shadow-sm text-xs font-medium text-red-600 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                                            Hapus
+                                        </button>
                                     </div>
                                 @endif
                             </td>
@@ -333,6 +331,40 @@
     </div>
 </div>
 
+<!-- Delete Photo Modal -->
+<div id="deletePhotoModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+            </div>
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mt-2">Hapus Foto Meteran</h3>
+            <div class="mt-2 px-7 py-3">
+                <p class="text-sm text-gray-500">
+                    Apakah Anda yakin ingin menghapus foto meteran untuk periode <strong id="photoIdentifier"></strong>?
+                </p>
+                <p class="text-sm text-red-600 mt-2">
+                    <strong>PERINGATAN:</strong> Tindakan ini akan menghapus foto meteran secara permanen. Tindakan ini tidak dapat dibatalkan!
+                </p>
+            </div>
+            <div class="items-center px-4 py-3">
+                <form id="deletePhotoForm" method="POST" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:w-auto sm:text-sm transition-colors">
+                        Hapus
+                    </button>
+                </form>
+                <button onclick="closeDeletePhotoModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
+                    Batal
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 function openUploadModal() {
     document.getElementById('uploadModal').classList.remove('hidden');
@@ -386,11 +418,24 @@ function closeViewPhotoModal() {
     document.getElementById('viewPhotoModal').classList.add('hidden');
 }
 
+function confirmPhotoDelete(button) {
+    const photoId = button.getAttribute('data-photo-id');
+    const periodName = button.getAttribute('data-period-name');
+    document.getElementById('photoIdentifier').textContent = periodName;
+    document.getElementById('deletePhotoForm').action = `/water-meter-photos/${photoId}`;
+    document.getElementById('deletePhotoModal').classList.remove('hidden');
+}
+
+function closeDeletePhotoModal() {
+    document.getElementById('deletePhotoModal').classList.add('hidden');
+}
+
 // Close modals on Escape key
 document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {
         closeUploadModal();
         closeViewPhotoModal();
+        closeDeletePhotoModal();
     }
 });
 </script>
