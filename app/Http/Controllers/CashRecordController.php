@@ -178,8 +178,14 @@ class CashRecordController extends Controller
     {
         $request->validate([
             'action' => 'required|in:approve,reject',
-            'rejection_reason' => 'required_if:action,reject|string|max:500',
         ]);
+
+        // Only validate rejection_reason if action is reject
+        if ($request->action === 'reject') {
+            $request->validate([
+                'rejection_reason' => 'required|string|max:500',
+            ]);
+        }
 
         if ($request->action === 'approve') {
             $cashRecord->update([
